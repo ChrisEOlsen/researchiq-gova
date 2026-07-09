@@ -9,6 +9,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	chiMiddleware "github.com/go-chi/chi/v5/middleware"
+	"github.com/stripe/stripe-go/v82"
 	"gova/app/cache"
 	"gova/app/db"
 	"gova/app/handlers"
@@ -26,6 +27,8 @@ func main() {
 	if secret := os.Getenv("SESSION_SECRET"); len(secret) < 32 {
 		log.Fatal("SESSION_SECRET must be set and at least 32 characters")
 	}
+
+	stripe.Key = os.Getenv("STRIPE_SECRET_KEY")
 
 	database, err := db.Open(os.Getenv("DB_PATH"))
 	if err != nil {

@@ -10,27 +10,22 @@
   <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body class="bg-bg text-text font-sans min-h-screen flex flex-col">
-  <nav class="bg-surface border-b border-border px-6 py-4">
-    <div class="max-w-5xl mx-auto flex items-center justify-between">
-      <a href="/" class="font-display text-lg font-semibold text-text">ResearchIQ</a>
-      <div id="nav-links" class="hidden md:flex items-center gap-6 text-sm"></div>
+  <nav class="bg-surface border-b border-border relative">
+    <div class="max-w-[900px] mx-auto px-4 h-[52px] flex items-center justify-between">
+      <a href="/" class="font-display text-xl font-bold text-text no-underline">ResearchIQ</a>
+      <div id="nav-links" class="hidden md:flex items-center gap-6"></div>
       <button id="nav-toggle" type="button" class="md:hidden flex flex-col gap-1.5 p-2" aria-label="Toggle menu" aria-expanded="false">
         <span class="block w-5 h-0.5 bg-text-muted"></span>
         <span class="block w-5 h-0.5 bg-text-muted"></span>
         <span class="block w-5 h-0.5 bg-text-muted"></span>
       </button>
     </div>
-    <div id="nav-mobile-menu" class="hidden md:hidden mt-4 flex flex-col gap-3 text-sm"></div>
+    <div id="nav-mobile-menu" class="hidden md:hidden absolute top-[52px] left-0 right-0 bg-surface border-b border-border px-4 py-2 flex flex-col gap-0 z-50"></div>
   </nav>
-  <main class="flex-1 px-6 py-8 max-w-3xl mx-auto w-full">
-    <div class="space-y-6">
-      <h1 class="font-display text-2xl font-semibold text-text">My Research</h1>
-      <div id="app">Loading...</div>
-    </div>
+  <main class="flex-1 w-full max-w-[900px] mx-auto px-4 py-10">
+    <h1 class="font-display text-[2rem] font-bold text-text mb-8">My Research</h1>
+    <div id="app">Loading...</div>
   </main>
-  <footer class="border-t border-border px-6 py-4 text-xs text-text-muted text-center">
-    Built with GOVA
-  </footer>
   <script type="module" src="/static/js/history.js"></script>
 </body>
 </html>
