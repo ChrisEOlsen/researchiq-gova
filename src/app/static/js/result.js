@@ -120,9 +120,13 @@ function renderShareState(container, shareToken) {
     const res = await post('/api/research_share', { job_id: Number(jobId) });
     shareBtn.disabled = false;
     if (!res.ok) return;
-    renderShareState(container, res.data.share_url.split('?t=')[1]);
-    // Auto-copy on first generation, matching production's behavior.
-    await navigator.clipboard.writeText(res.data.share_url).catch(() => {});
+    // Rebuild from the browser's actual origin rather than trusting the
+    // server's APP_URL — keeps this in sync with wherever the app is
+    // really being accessed from, same as the already-shared render path.
+    const token = res.data.share_url.split('?t=')[1];
+    renderShareState(container, token);
+    const shareUrl = `${window.location.origin}/share?t=${token}`;
+    await navigator.clipboard.writeText(shareUrl).catch(() => {});
     const copyBtn = container.querySelector('button');
     if (copyBtn) {
       copyBtn.textContent = 'Copied!';
