@@ -56,34 +56,45 @@ func main() {
 	r.Use(chiMiddleware.Logger)
 	r.Use(chiMiddleware.Recoverer)
 	r.Use(middleware.Security)
-	r.Use(middleware.CSRF)
 	r.Use(middleware.Auth)
 
 	// Static files
 	r.Handle("/static/*", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
 
-	// Pages
-	r.Get("/", handlers.HomeGET())
-	r.Get("/login", func(w http.ResponseWriter, r *http.Request) { http.ServeFile(w, r, "./static/pages/login.html") })
-	r.Get("/register", func(w http.ResponseWriter, r *http.Request) { http.ServeFile(w, r, "./static/pages/register.html") })
-	r.Get("/history", handlers.HistoryGET())
-	r.Get("/result", handlers.ResultGET())
-	r.Get("/share", handlers.ShareGET())
+	// Stripe calls this server-to-server with an HMAC-signed payload instead
+	// of a browser session — it must stay outside the CSRF group below.
+	r.Post("/api/payments_webhook", handlers.PaymentsWebhookPOST(database.Read, database.Write, appCache))
 
-	// Generated API routes registered here by MCP tools
-	// Use database.Read for GET handlers, database.Write for POST handlers
-	r.Post("/api/auth/login", handlers.LoginPOST(database.Read, database.Write, appCache))
-	r.Post("/api/auth/logout", handlers.LogoutPOST())
-	r.Get("/api/auth/me", handlers.MeGET(database.Read, database.Write, appCache))
-	r.Post("/api/auth/register", handlers.RegisterPOST(database.Read, database.Write, appCache))
+	r.Group(func(r chi.Router) {
+		r.Use(middleware.CSRF)
 
-	r.Post("/api/research_submit", handlers.ResearchSubmitPOST(database.Read, database.Write, appCache))
-	r.Get("/api/research_status", handlers.ResearchStatusGET(database.Read, database.Write, appCache))
-	r.Get("/api/research_history", handlers.ResearchHistoryGET(database.Read, database.Write, appCache))
-	r.Post("/api/research_delete", middleware.RequireAuth(handlers.ResearchDeletePOST(database.Read, database.Write, appCache)).ServeHTTP)
-	r.Get("/api/research_result", handlers.ResearchResultGET(database.Read, database.Write, appCache))
-	r.Post("/api/research_share", handlers.ResearchSharePOST(database.Read, database.Write, appCache))
-	r.Get("/api/research_visual", handlers.ResearchVisualGET(database.Read, database.Write, appCache))
+		// Pages
+		r.Get("/", handlers.HomeGET())
+		r.Get("/login", func(w http.ResponseWriter, r *http.Request) { http.ServeFile(w, r, "./static/pages/login.html") })
+		r.Get("/register", func(w http.ResponseWriter, r *http.Request) { http.ServeFile(w, r, "./static/pages/register.html") })
+		r.Get("/history", handlers.HistoryGET())
+		r.Get("/result", handlers.ResultGET())
+		r.Get("/share", handlers.ShareGET())
+		r.Get("/settings", handlers.SettingsGET())
+
+		// Generated API routes registered here by MCP tools
+		// Use database.Read for GET handlers, database.Write for POST handlers
+		r.Post("/api/auth/login", handlers.LoginPOST(database.Read, database.Write, appCache))
+		r.Post("/api/auth/logout", handlers.LogoutPOST())
+		r.Get("/api/auth/me", handlers.MeGET(database.Read, database.Write, appCache))
+		r.Post("/api/auth/register", handlers.RegisterPOST(database.Read, database.Write, appCache))
+
+		r.Post("/api/research_submit", handlers.ResearchSubmitPOST(database.Read, database.Write, appCache))
+		r.Get("/api/research_status", handlers.ResearchStatusGET(database.Read, database.Write, appCache))
+		r.Get("/api/research_history", handlers.ResearchHistoryGET(database.Read, database.Write, appCache))
+		r.Post("/api/research_delete", middleware.RequireAuth(handlers.ResearchDeletePOST(database.Read, database.Write, appCache)).ServeHTTP)
+		r.Get("/api/research_result", handlers.ResearchResultGET(database.Read, database.Write, appCache))
+		r.Post("/api/research_share", handlers.ResearchSharePOST(database.Read, database.Write, appCache))
+		r.Get("/api/research_visual", handlers.ResearchVisualGET(database.Read, database.Write, appCache))
+
+		r.Get("/api/settings", handlers.SettingsDataGET(database.Read, database.Write, appCache))
+		r.Post("/api/payments_checkout", middleware.RequireAuth(handlers.PaymentsCheckoutPOST(database.Read, database.Write, appCache)).ServeHTTP)
+	})
 
 	port := os.Getenv("APP_PORT")
 	if port == "" {
