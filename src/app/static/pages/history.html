@@ -3,22 +3,31 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ResearchIQ — Ask a health question</title>
+  <title>My Research</title>
   <link rel="stylesheet" href="/static/css/style.css">
   <style>
-    .spinner {
+    .pulse-dot {
       display: inline-block;
-      width: 14px;
-      height: 14px;
-      border: 2px solid rgba(255, 255, 255, 0.4);
-      border-top-color: #fff;
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
-      animation: spin 0.7s linear infinite;
+      background: #dc2626;
+      animation: pulse 1.4s ease-in-out infinite;
       vertical-align: middle;
     }
-    @keyframes spin {
-      to { transform: rotate(360deg); }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.5); opacity: 0.4; }
     }
+    .badge {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 0.125rem 0.5rem;
+      border-radius: 9999px;
+    }
+    .badge-done { background: #dcfce7; color: #15803d; }
+    .badge-failed { background: #fee2e2; color: #b91c1c; }
   </style>
 </head>
 <body class="bg-gray-50 text-gray-900 min-h-screen flex flex-col">
@@ -30,11 +39,14 @@
     </div>
   </nav>
   <main class="flex-1 px-6 py-8 max-w-4xl mx-auto w-full">
-    <div id="app">Loading...</div>
+    <div class="space-y-6">
+      <h1 class="text-2xl font-semibold tracking-tight">My Research</h1>
+      <div id="app">Loading...</div>
+    </div>
   </main>
   <footer class="border-t border-gray-100 px-6 py-4 text-xs text-gray-400">
     Built with GOVA
   </footer>
-  <script type="module" src="/static/js/home.js"></script>
+  <script type="module" src="/static/js/history.js"></script>
 </body>
 </html>

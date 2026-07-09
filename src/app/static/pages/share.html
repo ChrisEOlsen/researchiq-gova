@@ -3,38 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ResearchIQ — Ask a health question</title>
+  <title>Shared Research</title>
   <link rel="stylesheet" href="/static/css/style.css">
-  <style>
-    .spinner {
-      display: inline-block;
-      width: 14px;
-      height: 14px;
-      border: 2px solid rgba(255, 255, 255, 0.4);
-      border-top-color: #fff;
-      border-radius: 50%;
-      animation: spin 0.7s linear infinite;
-      vertical-align: middle;
-    }
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-  </style>
 </head>
 <body class="bg-gray-50 text-gray-900 min-h-screen flex flex-col">
   <nav class="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
     <a href="/" class="font-semibold text-sm tracking-tight">ResearchIQ</a>
     <div class="flex gap-6 text-sm text-gray-500">
       <a href="/" class="hover:text-gray-900 transition-colors">Home</a>
-      <a href="/history" class="hover:text-gray-900 transition-colors">My Research</a>
     </div>
   </nav>
-  <main class="flex-1 px-6 py-8 max-w-4xl mx-auto w-full">
+  <main class="flex-1 px-6 py-8 max-w-3xl mx-auto w-full">
     <div id="app">Loading...</div>
   </main>
   <footer class="border-t border-gray-100 px-6 py-4 text-xs text-gray-400">
     Built with GOVA
   </footer>
-  <script type="module" src="/static/js/home.js"></script>
+  <script type="module" src="/static/js/share.js"></script>
 </body>
 </html>

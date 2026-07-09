@@ -34,7 +34,6 @@ func main() {
 	defer database.Close()
 
 	appCache := cache.New()
-	_ = appCache
 
 	// PubMed abstract cache: prune entries older than 30 days at startup,
 	// then keep pruning on a 24h ticker for the life of the process.
@@ -67,6 +66,9 @@ func main() {
 	r.Get("/", handlers.HomeGET())
 	r.Get("/login", func(w http.ResponseWriter, r *http.Request) { http.ServeFile(w, r, "./static/pages/login.html") })
 	r.Get("/register", func(w http.ResponseWriter, r *http.Request) { http.ServeFile(w, r, "./static/pages/register.html") })
+	r.Get("/history", handlers.HistoryGET())
+	r.Get("/result", handlers.ResultGET())
+	r.Get("/share", handlers.ShareGET())
 
 	// Generated API routes registered here by MCP tools
 	// Use database.Read for GET handlers, database.Write for POST handlers
@@ -74,6 +76,14 @@ func main() {
 	r.Post("/api/auth/logout", handlers.LogoutPOST())
 	r.Get("/api/auth/me", handlers.MeGET(database.Read, database.Write, appCache))
 	r.Post("/api/auth/register", handlers.RegisterPOST(database.Read, database.Write, appCache))
+
+	r.Post("/api/research_submit", handlers.ResearchSubmitPOST(database.Read, database.Write, appCache))
+	r.Get("/api/research_status", handlers.ResearchStatusGET(database.Read, database.Write, appCache))
+	r.Get("/api/research_history", handlers.ResearchHistoryGET(database.Read, database.Write, appCache))
+	r.Post("/api/research_delete", middleware.RequireAuth(handlers.ResearchDeletePOST(database.Read, database.Write, appCache)).ServeHTTP)
+	r.Get("/api/research_result", handlers.ResearchResultGET(database.Read, database.Write, appCache))
+	r.Post("/api/research_share", handlers.ResearchSharePOST(database.Read, database.Write, appCache))
+	r.Get("/api/research_visual", handlers.ResearchVisualGET(database.Read, database.Write, appCache))
 
 	port := os.Getenv("APP_PORT")
 	if port == "" {
