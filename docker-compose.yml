@@ -10,3 +10,20 @@ services:
       - ./data:/data
       - ./logs:/logs
     env_file: .env
+
+  # Dedicated container for the gova-builder MCP server, decoupled from the
+  # app container's lifecycle. `docker compose restart app` (needed after
+  # every Go code change) kills any `docker exec` sessions in that
+  # container — including a long-lived MCP stdio connection. Running the
+  # MCP server here instead means it survives app restarts indefinitely.
+  builder:
+    build: .
+    # Keep-alive process only — the MCP client invokes mcp-server itself
+    # fresh via `docker exec` on each connection (same as it always did
+    # for the app container). This just needs to stay running as a
+    # stable exec target, independent of the app service's restarts.
+    command: ["sleep", "infinity"]
+    volumes:
+      - ./src:/src
+      - ./data:/data
+    env_file: .env
