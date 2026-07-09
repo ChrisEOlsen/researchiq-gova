@@ -13,6 +13,13 @@ async function init() {
     const name = document.getElementById('name').value;
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
+    const passwordConfirm = document.getElementById('password_confirm').value;
+
+    if (password !== passwordConfirm) {
+      errorMsg.textContent = 'Passwords do not match.';
+      errorMsg.classList.remove('hidden');
+      return;
+    }
 
     const res = await post('/api/auth/register', { name, email, password });
     if (res.ok) {

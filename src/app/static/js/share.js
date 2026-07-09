@@ -34,14 +34,57 @@ function setOgMeta(title, description) {
   if (descEl && description) descEl.setAttribute('content', description);
 }
 
-function makeSection(heading) {
-  const section = document.createElement('div');
-  section.className = 'border-b border-border pb-6';
+function displayTitle(job) {
+  if (job.title) return job.title;
+  return job.question && job.question.length > 80 ? job.question.slice(0, 80) : job.question;
+}
+
+function sectionHeading(text) {
   const h2 = document.createElement('h2');
-  h2.className = 'font-display text-lg font-semibold text-text mb-3';
-  h2.textContent = heading;
-  section.appendChild(h2);
-  return section;
+  h2.className = 'font-display text-lg font-semibold text-text pb-2 border-b border-border mb-4';
+  h2.textContent = text;
+  return h2;
+}
+
+function studyCard(s) {
+  const card = document.createElement('div');
+  card.className = 'bg-surface border border-border rounded-lg px-4 py-3.5';
+  const url = s.url || (s.pubmed_id ? `https://pubmed.ncbi.nlm.nih.gov/${s.pubmed_id}` : '');
+  if (url) {
+    const a = document.createElement('a');
+    a.href = url;
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    a.className = 'text-sm font-medium text-primary no-underline hover:underline block leading-snug';
+    a.textContent = s.title || 'Untitled study';
+    card.appendChild(a);
+  } else {
+    const p = document.createElement('p');
+    p.className = 'text-sm font-medium text-text m-0 leading-snug';
+    p.textContent = s.title || 'Untitled study';
+    card.appendChild(p);
+  }
+  const meta = document.createElement('p');
+  meta.className = 'text-xs text-text-muted mt-1';
+  meta.textContent = [s.authors, s.journal, s.year].filter(Boolean).join(' · ');
+  card.appendChild(meta);
+  return card;
+}
+
+function renderVisualCallout(shareToken) {
+  const callout = document.createElement('div');
+  callout.className = 'flex items-center justify-between gap-4 bg-surface-2 border-l-[3px] border-primary rounded-r-md px-4 py-3 mb-10';
+  const text = document.createElement('p');
+  text.className = 'text-[0.8125rem] italic text-text-muted m-0 leading-snug';
+  text.textContent = '✦ Visual explainer available — see the findings illustrated';
+  const link = document.createElement('a');
+  link.href = `/api/research_visual?share_token=${encodeURIComponent(shareToken)}`;
+  link.target = '_blank';
+  link.rel = 'noopener noreferrer';
+  link.className = 'inline-flex items-center gap-1.5 bg-primary hover:bg-primary-hover text-white rounded-md px-3.5 py-1.5 text-[0.8125rem] font-semibold no-underline whitespace-nowrap shrink-0 transition-colors';
+  link.textContent = 'Open →';
+  callout.append(text, link);
+  return callout;
 }
 
 function render(data) {
@@ -50,123 +93,120 @@ function render(data) {
   const keyTakeaways = Array.isArray(data.key_takeaways) ? data.key_takeaways : [];
   const followUpQuestions = Array.isArray(data.follow_up_questions) ? data.follow_up_questions : [];
   const studies = Array.isArray(data.studies) ? data.studies : [];
+  const title = displayTitle(job);
 
-  setOgMeta(job.title || job.question, summary.slice(0, 200));
+  setOgMeta(title, summary.slice(0, 200));
 
   const wrapper = document.createElement('div');
-  wrapper.className = 'space-y-6';
 
-  const header = document.createElement('div');
-  header.className = 'border-b border-border pb-6 space-y-2';
   const h1 = document.createElement('h1');
-  h1.className = 'font-display text-3xl font-semibold text-text';
-  h1.textContent = job.title || job.question || 'Shared Research';
-  header.appendChild(h1);
+  h1.className = 'font-display text-[1.875rem] font-bold text-text leading-tight mb-1.5';
+  h1.textContent = title;
+  wrapper.appendChild(h1);
 
-  if (job.question) {
+  if (job.title && job.question) {
     const question = document.createElement('p');
-    question.className = 'text-sm text-text-muted';
+    question.className = 'text-[0.8125rem] text-text-muted italic mb-1 leading-snug';
     question.textContent = job.question;
-    header.appendChild(question);
+    wrapper.appendChild(question);
   }
-  wrapper.appendChild(header);
 
-  const summarySection = document.createElement('div');
-  summarySection.className = 'border-b border-border pb-6';
-  const summaryCard = document.createElement('div');
-  summaryCard.className = 'bg-surface border border-border rounded-lg p-6';
-  const summaryP = document.createElement('p');
-  summaryP.className = 'text-sm text-text whitespace-pre-wrap leading-relaxed';
-  summaryP.textContent = summary;
-  summaryCard.appendChild(summaryP);
-  summarySection.appendChild(summaryCard);
-  wrapper.appendChild(summarySection);
+  const timestamp = document.createElement('p');
+  timestamp.className = 'text-xs text-text-muted mb-6';
+  timestamp.textContent = `Researched ${new Date(job.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}`;
+  wrapper.appendChild(timestamp);
 
+  wrapper.appendChild(renderVisualCallout(shareToken));
+
+  if (summary) {
+    const section = document.createElement('section');
+    section.className = 'mb-10';
+    section.appendChild(sectionHeading('Summary'));
+    const p = document.createElement('p');
+    p.className = 'text-[0.9375rem] leading-[1.75] text-text whitespace-pre-wrap';
+    p.textContent = summary;
+    section.appendChild(p);
+    wrapper.appendChild(section);
+  }
+
+  const takeawaysSection = document.createElement('section');
+  takeawaysSection.className = 'mb-10';
+  takeawaysSection.appendChild(sectionHeading('Key Takeaways'));
   if (keyTakeaways.length > 0) {
-    const section = makeSection('Key takeaways');
     const ul = document.createElement('ul');
-    ul.className = 'space-y-2';
+    ul.className = 'flex flex-col gap-2.5 list-none p-0 m-0';
     keyTakeaways.forEach((t) => {
       const li = document.createElement('li');
-      li.className = 'text-sm text-text flex gap-2';
+      li.className = 'flex gap-3 text-[0.9375rem] text-text leading-relaxed';
       const arrow = document.createElement('span');
-      arrow.className = 'text-primary font-medium shrink-0';
+      arrow.className = 'text-primary shrink-0 mt-0.5';
       arrow.textContent = '→';
       const text = document.createElement('span');
       text.textContent = t;
       li.append(arrow, text);
       ul.appendChild(li);
     });
-    section.appendChild(ul);
-    wrapper.appendChild(section);
+    takeawaysSection.appendChild(ul);
+  } else {
+    const p = document.createElement('p');
+    p.className = 'text-sm text-text-muted';
+    p.textContent = 'No takeaways available.';
+    takeawaysSection.appendChild(p);
   }
+  wrapper.appendChild(takeawaysSection);
 
   if (followUpQuestions.length > 0) {
-    const section = makeSection('Follow-up questions');
+    const section = document.createElement('section');
+    section.className = 'mb-10';
+    section.appendChild(sectionHeading('Q&A'));
     const qaList = document.createElement('div');
-    qaList.className = 'space-y-4';
+    qaList.className = 'flex flex-col gap-3';
     followUpQuestions.forEach((qa) => {
-      const block = document.createElement('div');
+      const card = document.createElement('div');
+      card.className = 'bg-surface border border-border rounded-lg px-4 py-3.5';
       const q = document.createElement('p');
-      q.className = 'text-sm font-medium text-text';
+      q.className = 'text-sm font-semibold text-text leading-snug mb-1.5';
       q.textContent = qa.question ?? '';
-      const a = document.createElement('p');
-      a.className = 'text-sm text-text-muted mt-1';
-      a.textContent = qa.answer ?? '';
-      block.append(q, a);
-      qaList.appendChild(block);
+      card.appendChild(q);
+      if (qa.answer) {
+        const a = document.createElement('p');
+        a.className = 'text-[0.8125rem] text-text-muted leading-relaxed';
+        a.textContent = qa.answer;
+        card.appendChild(a);
+      }
+      qaList.appendChild(card);
     });
     section.appendChild(qaList);
     wrapper.appendChild(section);
   }
 
-  if (studies.length > 0) {
-    const section = makeSection(`Studies (${studies.length})`);
-    const list = document.createElement('div');
-    list.className = 'space-y-2';
-    studies.forEach((s) => {
-      const item = document.createElement('div');
-      item.className = 'text-sm bg-surface border border-border rounded-lg p-4';
-      const link = document.createElement('a');
-      link.href = s.url ?? '#';
-      link.target = '_blank';
-      link.rel = 'noopener noreferrer';
-      link.className = 'text-text font-medium hover:text-primary transition-colors';
-      link.textContent = s.title ?? 'Untitled study';
-      const meta = document.createElement('p');
-      meta.className = 'text-xs text-text-muted mt-1';
-      meta.textContent = `${s.authors ?? ''} · ${s.journal ?? ''} · ${s.year ?? ''}`;
-      item.append(link, meta);
-      list.appendChild(item);
-    });
-    section.appendChild(list);
-    wrapper.appendChild(section);
+  const studiesSection = document.createElement('section');
+  studiesSection.className = 'mb-10';
+  studiesSection.appendChild(sectionHeading(`Studies (${studies.length})`));
+  const studiesList = document.createElement('div');
+  studiesList.className = 'flex flex-col gap-2';
+  if (studies.length === 0) {
+    const p = document.createElement('p');
+    p.className = 'text-sm text-text-muted';
+    p.textContent = 'No studies retrieved.';
+    studiesList.appendChild(p);
+  } else {
+    studies.forEach((s) => studiesList.appendChild(studyCard(s)));
   }
+  studiesSection.appendChild(studiesList);
+  wrapper.appendChild(studiesSection);
 
-  const visualCallout = document.createElement('div');
-  visualCallout.className = 'border-l-4 border-primary bg-surface-2 rounded-r-lg p-4';
-  const visualText = document.createElement('p');
-  visualText.className = 'text-sm text-text-muted italic';
-  visualText.textContent = 'Prefer a visual walkthrough? See the key findings laid out as an illustrated explainer.';
-  const visualLink = document.createElement('a');
-  visualLink.href = `/api/research_visual?share_token=${encodeURIComponent(shareToken)}`;
-  visualLink.target = '_blank';
-  visualLink.rel = 'noopener noreferrer';
-  visualLink.className = 'inline-block mt-2 text-sm font-medium text-primary hover:text-primary-hover not-italic';
-  visualLink.textContent = 'Open visual explainer →';
-  visualCallout.append(visualText, visualLink);
-  wrapper.appendChild(visualCallout);
-
-  const actions = document.createElement('div');
-  actions.className = 'flex flex-wrap items-center gap-3';
-
-  const cta = document.createElement('a');
-  cta.href = '/';
-  cta.className = 'px-4 py-2 bg-primary text-white text-sm font-medium rounded hover:bg-primary-hover transition-colors';
-  cta.textContent = 'Try ResearchIQ free';
-  actions.appendChild(cta);
-
-  wrapper.appendChild(actions);
+  const cta = document.createElement('div');
+  cta.className = 'border border-border rounded-lg px-6 py-5 text-center bg-surface mb-8';
+  const ctaText = document.createElement('p');
+  ctaText.className = 'text-[0.9375rem] text-text mb-3';
+  ctaText.textContent = 'Want to run your own health and wellness research?';
+  const ctaLink = document.createElement('a');
+  ctaLink.href = '/register';
+  ctaLink.className = 'inline-flex items-center bg-primary hover:bg-primary-hover text-white rounded-md px-5 py-2 text-sm font-semibold no-underline transition-colors';
+  ctaLink.textContent = 'Try ResearchIQ free →';
+  cta.append(ctaText, ctaLink);
+  wrapper.appendChild(cta);
 
   app.replaceChildren(wrapper);
 }
