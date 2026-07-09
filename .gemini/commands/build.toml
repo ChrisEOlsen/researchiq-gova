@@ -33,7 +33,7 @@ Additional mandatory context:
 - Follow the Golden Recipe from GEMINI.md
 - Never write raw SQL in handlers
 - call build_css() after final UI pass
-- Activate uncodixify: activate_skill "uncodixify"
+- Apply careful, human-designed UI polish — avoid generic AI dashboard patterns
 - JS safety: NEVER innerHTML = userValue. ALWAYS textContent or createElement.
 
 ## Step 6: Security Analysis

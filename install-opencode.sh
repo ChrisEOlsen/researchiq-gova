@@ -78,14 +78,6 @@ fi
 CONTAINER_NAME="${APP_NAME}-app-1"
 ok "Container: $CONTAINER_NAME"
 
-# ── Uncodixify skill ────────────────────────────────────────────────────────
-step "Installing uncodixify skill"
-
-mkdir -p "$HOME/.claude/skills/uncodixify"
-curl -fsSL "https://raw.githubusercontent.com/cyxzdev/Uncodixfy/main/SKILL.md" \
-    > "$HOME/.claude/skills/uncodixify/SKILL.md"
-ok "uncodixify SKILL.md installed (~/.claude/skills/uncodixify — auto-discovered by OpenCode)"
-
 # ── Docker build ─────────────────────────────────────────────────────────────
 step "Building Docker image"
 

@@ -96,14 +96,6 @@ else
     fail "MCP server binary not found — docker build may have failed. Run: docker compose logs app"
 fi
 
-# ── Uncodixify skill ────────────────────────────────────────────────────────
-step "Installing uncodixify skill"
-
-mkdir -p "$HOME/.gemini/skills/uncodixify"
-curl -fsSL "https://raw.githubusercontent.com/cyxzdev/Uncodixfy/main/SKILL.md" \
-    > "$HOME/.gemini/skills/uncodixify/SKILL.md"
-ok "uncodixify skill installed (~/.gemini/skills/uncodixify)"
-
 # ── Superpowers extension ────────────────────────────────────────────────────
 step "Installing superpowers extension"
 

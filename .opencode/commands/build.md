@@ -78,7 +78,7 @@ Subagents must confirm at the start of each task:
 - Follow the Golden Recipe from CLAUDE.md
 - Never write raw SQL in handler files — use model methods only
 - Call `build_css()` after the final UI pass
-- Use `uncodixify` skill before any UI work
+- Apply careful, human-designed UI polish — avoid generic AI dashboard patterns
 - Use `context7` MCP for any external API documentation
 - Do not add manual cache calls to model methods — caching is automatic
 - JS safety: NEVER use `element.innerHTML = userValue` (XSS). ALWAYS use `element.textContent` for user-supplied text. ALWAYS use `createElement` for structured HTML.
@@ -123,7 +123,7 @@ Verify:
 - **Features:** All SEED.md features implemented? Auth-required pages call `requireAuth()`? No placeholder text?
 - **CRUD:** If a create form exists, do edit and delete exist?
 - **Architecture:** Tables via `execute_sql`? Models via `create_model`? No raw SQL in handlers? JS never uses `innerHTML` with user data? `build_css()` called? Linter passed?
-- **Design:** `uncodixify` invoked? Titles set? Mobile-responsive?
+- **Design:** careful human-designed polish applied (not generic AI dashboard look)? Titles set? Mobile-responsive?
 - **App:** `docker compose logs app` shows no errors?
 - **Environment:** New env vars documented in `env.example`? No hardcoded secrets?
 
