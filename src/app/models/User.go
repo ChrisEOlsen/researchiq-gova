@@ -10,11 +10,13 @@ import (
 )
 
 type User struct {
-	ID           int64     `json:"id"`
-	Name         string    `json:"name"`
-	Email        string    `json:"email"`
-	PasswordHash string    `json:"-"`
-	CreatedAt    time.Time `json:"created_at"`
+	ID             int64     `json:"id"`
+	Name           string    `json:"name"`
+	Email          string    `json:"email"`
+	PasswordHash   string    `json:"-"`
+	Credits        int64     `json:"credits"`
+	LifetimeAccess bool      `json:"lifetime_access"`
+	CreatedAt      time.Time `json:"created_at"`
 }
 
 type UserModel struct {
@@ -44,31 +46,35 @@ func (m *UserModel) Create(name, email, password string) (int64, error) {
 
 func (m *UserModel) FindByEmail(email string) (*User, error) {
 	row := m.readDB.QueryRow(
-		"SELECT id, name, email, password_hash, created_at FROM users WHERE email = ? LIMIT 1",
+		"SELECT id, name, email, password_hash, credits, lifetime_access, created_at FROM users WHERE email = ? LIMIT 1",
 		email,
 	)
 	var u User
-	if err := row.Scan(&u.ID, &u.Name, &u.Email, &u.PasswordHash, &u.CreatedAt); err != nil {
+	var liInt int
+	if err := row.Scan(&u.ID, &u.Name, &u.Email, &u.PasswordHash, &u.Credits, &liInt, &u.CreatedAt); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, errors.New("user not found")
 		}
 		return nil, err
 	}
+	u.LifetimeAccess = liInt != 0
 	return &u, nil
 }
 
 func (m *UserModel) FindByID(id int64) (*User, error) {
 	row := m.readDB.QueryRow(
-		"SELECT id, name, email, created_at FROM users WHERE id = ? LIMIT 1",
+		"SELECT id, name, email, credits, lifetime_access, created_at FROM users WHERE id = ? LIMIT 1",
 		id,
 	)
 	var u User
-	if err := row.Scan(&u.ID, &u.Name, &u.Email, &u.CreatedAt); err != nil {
+	var liInt int
+	if err := row.Scan(&u.ID, &u.Name, &u.Email, &u.Credits, &liInt, &u.CreatedAt); err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, errors.New("user not found")
 		}
 		return nil, err
 	}
+	u.LifetimeAccess = liInt != 0
 	return &u, nil
 }
 
@@ -101,4 +107,14 @@ func (m *UserModel) RecordFailedAttempt(ip string) {
 
 func (m *UserModel) ClearAttempts(ip string) {
 	_, _ = m.writeDB.Exec("DELETE FROM rate_limits WHERE ip = ?", ip)
+}
+
+func (m *UserModel) AddCredits(userID int64, amount int64) error {
+	_, err := m.writeDB.Exec("UPDATE users SET credits = credits + ? WHERE id = ?", amount, userID)
+	return err
+}
+
+func (m *UserModel) DecrementCredits(userID int64) error {
+	_, err := m.writeDB.Exec("UPDATE users SET credits = credits - 1 WHERE id = ? AND credits > 0", userID)
+	return err
 }

@@ -43,6 +43,9 @@ func RegisterPOST(readDB, writeDB *sql.DB, appCache *cache.Cache) http.HandlerFu
 			return
 		}
 
+		txModel := models.NewCreditTransactionModel(readDB, writeDB, appCache)
+		txModel.Create(id, "free", 5, "Welcome credits", "", 0)
+
 		middleware.SetSession(w, id, 30*24*time.Hour)
 		jsonOK(w, map[string]any{"id": id})
 	}
