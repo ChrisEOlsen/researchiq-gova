@@ -21,3 +21,19 @@ func jsonError(w http.ResponseWriter, msg string, status int) {
 	w.WriteHeader(status)
 	json.NewEncoder(w).Encode(envelope{OK: false, Error: msg})
 }
+
+// maxJSONBodyBytes caps request bodies decoded via decodeJSON, matching the
+// limit payments_webhook.go already applies via io.LimitReader. Without
+// this, json.Decoder will buffer/parse as much as an (often unauthenticated)
+// client sends before any field-length validation runs — a memory-
+// exhaustion DoS vector with no reverse proxy in front of this app.
+const maxJSONBodyBytes = 65536
+
+// decodeJSON wraps r.Body in a size-limited reader before decoding into v,
+// so a caller can't force an unbounded read/allocation just by sending an
+// oversized body. Use this instead of json.NewDecoder(r.Body).Decode
+// directly in every POST handler that accepts a JSON body.
+func decodeJSON(w http.ResponseWriter, r *http.Request, v any) error {
+	r.Body = http.MaxBytesReader(w, r.Body, maxJSONBodyBytes)
+	return json.NewDecoder(r.Body).Decode(v)
+}

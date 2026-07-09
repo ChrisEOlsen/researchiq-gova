@@ -5,8 +5,8 @@ import (
 	_ "embed"
 	"encoding/json"
 	"fmt"
+	"html/template"
 	"strings"
-	"text/template"
 )
 
 //go:embed visual_templates/page-shell.html
@@ -168,9 +168,19 @@ func RenderVisualPage(page VisualPage) (string, error) {
 		body.WriteString(html)
 	}
 	type shellData struct {
-		Title       string
-		Subtitle    string
-		BodyContent string
+		Title    string
+		Subtitle string
+		// BodyContent is pre-rendered by renderSection above, which already
+		// ran every AI-controlled leaf field (Heading, Label, Body, ...)
+		// through html/template's auto-escaping at the point each was
+		// substituted into its section template. It is therefore safe,
+		// fully-formed HTML built entirely from trusted template markup —
+		// marking it template.HTML here just tells the shell template not
+		// to re-escape (and thereby visibly corrupt) that already-safe
+		// markup a second time. Title/Subtitle stay plain strings so they
+		// (the only remaining untrusted leaf values on this struct) still
+		// get escaped normally.
+		BodyContent template.HTML
 	}
 	t, err := template.New("shell").Funcs(visualFuncs).Parse(tmplPageShell)
 	if err != nil {
@@ -180,7 +190,7 @@ func RenderVisualPage(page VisualPage) (string, error) {
 	if err := t.Execute(&buf, shellData{
 		Title:       page.Title,
 		Subtitle:    page.Subtitle,
-		BodyContent: body.String(),
+		BodyContent: template.HTML(body.String()), //nolint:gosec // safe: see BodyContent doc comment above
 	}); err != nil {
 		return "", fmt.Errorf("execute shell template: %w", err)
 	}

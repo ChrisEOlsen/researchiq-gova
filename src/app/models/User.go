@@ -109,6 +109,58 @@ func (m *UserModel) ClearAttempts(ip string) {
 	_, _ = m.writeDB.Exec("DELETE FROM rate_limits WHERE ip = ?", ip)
 }
 
+// guestRateLimitKey namespaces guest-submission tracking within the shared
+// rate_limits table (whose primary key is just "ip") so it can never
+// collide with a login-lockout row for the same address — the two use
+// cases have different reset semantics (15-minute lockout vs. a 30-day
+// submission window) and would corrupt each other if they shared a row.
+func guestRateLimitKey(ip string) string { return "guest:" + ip }
+
+// IsGuestSubmitLimited reports whether ip has already used its 5 guest
+// research submissions within the current 30-day window (SEED.md: "IP rate
+// limit: max 5 guest submissions per IP per 30 days"). It is a read-only
+// check — call RecordGuestSubmission separately once the submission is
+// actually accepted.
+//
+// This reuses the rate_limits table's locked_until column with different
+// semantics than the login-lockout use above: here it stores when the
+// current 30-day window *expires* (not a lockout expiry), so attempts can
+// be interpreted as "submissions so far in this window" rather than
+// "consecutive failed attempts".
+func (m *UserModel) IsGuestSubmitLimited(ip string) (bool, error) {
+	var attempts int64
+	var windowExpires sql.NullTime
+	row := m.readDB.QueryRow("SELECT attempts, locked_until FROM rate_limits WHERE ip = ?", guestRateLimitKey(ip))
+	if err := row.Scan(&attempts, &windowExpires); err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return false, nil
+		}
+		return false, err
+	}
+	windowActive := windowExpires.Valid && time.Now().Before(windowExpires.Time)
+	return windowActive && attempts >= 5, nil
+}
+
+// RecordGuestSubmission records one guest research submission from ip
+// against its rolling 30-day window: starts a fresh window (attempts=1) if
+// none is active, otherwise increments the counter within the existing
+// window. Call only after IsGuestSubmitLimited has confirmed the
+// submission is allowed.
+func (m *UserModel) RecordGuestSubmission(ip string) {
+	_, _ = m.writeDB.Exec(`
+		INSERT INTO rate_limits (ip, attempts, locked_until, updated_at)
+		VALUES (?, 1, datetime('now', '+30 days'), CURRENT_TIMESTAMP)
+		ON CONFLICT(ip) DO UPDATE SET
+			attempts = CASE
+				WHEN locked_until IS NULL OR locked_until < CURRENT_TIMESTAMP THEN 1
+				ELSE attempts + 1 END,
+			locked_until = CASE
+				WHEN locked_until IS NULL OR locked_until < CURRENT_TIMESTAMP THEN datetime('now', '+30 days')
+				ELSE locked_until END,
+			updated_at = CURRENT_TIMESTAMP
+	`, guestRateLimitKey(ip))
+}
+
 func (m *UserModel) AddCredits(userID int64, amount int64) error {
 	_, err := m.writeDB.Exec("UPDATE users SET credits = credits + ? WHERE id = ?", amount, userID)
 	return err

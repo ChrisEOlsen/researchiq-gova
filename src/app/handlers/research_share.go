@@ -4,7 +4,6 @@ import (
 	"crypto/rand"
 	"database/sql"
 	"encoding/hex"
-	"encoding/json"
 	"net/http"
 	"os"
 
@@ -18,7 +17,7 @@ func ResearchSharePOST(readDB, writeDB *sql.DB, appCache *cache.Cache) http.Hand
 		var body struct {
 			JobID int64 `json:"job_id"`
 		}
-		json.NewDecoder(r.Body).Decode(&body)
+		_ = decodeJSON(w, r, &body)
 		jobModel := models.NewResearchJobModel(readDB, writeDB, appCache)
 		job, err := jobModel.GetByID(body.JobID)
 		if err != nil || job == nil || !jobModel.Owns(job, middleware.UserID(r), getGuestJobIDs(r)) {

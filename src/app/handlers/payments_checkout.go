@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"database/sql"
-	"encoding/json"
 	"net/http"
 	"os"
 	"strconv"
@@ -25,7 +24,7 @@ func PaymentsCheckoutPOST(readDB, writeDB *sql.DB, appCache *cache.Cache) http.H
 		var body struct {
 			PriceID string `json:"price_id"`
 		}
-		if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		if err := decodeJSON(w, r, &body); err != nil {
 			jsonError(w, "invalid request body", 400)
 			return
 		}

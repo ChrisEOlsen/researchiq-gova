@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"database/sql"
-	"encoding/json"
 	"net/http"
 	"strings"
 	"time"
@@ -45,7 +44,7 @@ func LoginPOST(readDB, writeDB *sql.DB, appCache *cache.Cache) http.HandlerFunc 
 			Email    string `json:"email"`
 			Password string `json:"password"`
 		}
-		if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		if err := decodeJSON(w, r, &body); err != nil {
 			jsonError(w, "invalid request body", http.StatusBadRequest)
 			return
 		}

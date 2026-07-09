@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"database/sql"
-	"encoding/json"
 	"net/http"
 	"strings"
 
@@ -17,7 +16,7 @@ func ResearchSubmitPOST(readDB, writeDB *sql.DB, appCache *cache.Cache) http.Han
 		var body struct {
 			Question string `json:"question"`
 		}
-		if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		if err := decodeJSON(w, r, &body); err != nil {
 			jsonError(w, "invalid request body", 400)
 			return
 		}
@@ -59,6 +58,21 @@ func ResearchSubmitPOST(readDB, writeDB *sql.DB, appCache *cache.Cache) http.Han
 				jsonError(w, "guest query limit reached", 402)
 				return
 			}
+			// IP-based backstop independent of the riq_guest cookie, which
+			// a client can simply not send/store to reset the count above
+			// to zero on every request. See SEED.md: "IP rate limit: max 5
+			// guest submissions per IP per 30 days".
+			ip := clientIP(r)
+			limited, err := userModel.IsGuestSubmitLimited(ip)
+			if err != nil {
+				jsonError(w, "internal error", 500)
+				return
+			}
+			if limited {
+				jsonError(w, "guest submission limit reached for this network — please register for more", http.StatusTooManyRequests)
+				return
+			}
+			userModel.RecordGuestSubmission(ip)
 		}
 
 		jobID, err := jobModel.Create(question, userID)

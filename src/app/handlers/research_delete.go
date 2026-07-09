@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"database/sql"
-	"encoding/json"
 	"net/http"
 
 	"gova/app/cache"
@@ -19,7 +18,7 @@ func ResearchDeletePOST(readDB, writeDB *sql.DB, appCache *cache.Cache) http.Han
 		var body struct {
 			JobID int64 `json:"job_id"`
 		}
-		if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		if err := decodeJSON(w, r, &body); err != nil {
 			jsonError(w, "invalid request body", 400)
 			return
 		}
