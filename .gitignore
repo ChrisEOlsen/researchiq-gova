@@ -13,3 +13,4 @@ opencode.json
 docs/
 .gemini/settings.json
 data/
+.worktrees/
