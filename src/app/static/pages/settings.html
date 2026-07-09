@@ -4,36 +4,32 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Settings</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/static/css/style.css">
-  <style>
-    .badge {
-      display: inline-block;
-      font-size: 0.75rem;
-      font-weight: 600;
-      padding: 0.125rem 0.5rem;
-      border-radius: 9999px;
-      background: #dcfce7;
-      color: #15803d;
-    }
-  </style>
 </head>
-<body class="bg-gray-50 text-gray-900 min-h-screen flex flex-col">
-  <nav class="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
-    <a href="/" class="font-semibold text-sm tracking-tight">ResearchIQ</a>
-    <div class="flex gap-6 text-sm text-gray-500">
-      <a href="/" class="hover:text-gray-900 transition-colors">Home</a>
-      <a href="/history" class="hover:text-gray-900 transition-colors">My Research</a>
-      <a href="/settings" class="hover:text-gray-900 transition-colors">Settings</a>
+<body class="bg-bg text-text font-sans min-h-screen flex flex-col">
+  <nav class="bg-surface border-b border-border px-6 py-4">
+    <div class="max-w-5xl mx-auto flex items-center justify-between">
+      <a href="/" class="font-display text-lg font-semibold text-text">ResearchIQ</a>
+      <div id="nav-links" class="hidden md:flex items-center gap-6 text-sm"></div>
+      <button id="nav-toggle" type="button" class="md:hidden flex flex-col gap-1.5 p-2" aria-label="Toggle menu" aria-expanded="false">
+        <span class="block w-5 h-0.5 bg-text-muted"></span>
+        <span class="block w-5 h-0.5 bg-text-muted"></span>
+        <span class="block w-5 h-0.5 bg-text-muted"></span>
+      </button>
     </div>
+    <div id="nav-mobile-menu" class="hidden md:hidden mt-4 flex flex-col gap-3 text-sm"></div>
   </nav>
-  <main class="flex-1 px-6 py-8 max-w-4xl mx-auto w-full">
-    <div class="space-y-6">
-      <h1 class="text-2xl font-semibold tracking-tight">Settings</h1>
+  <main class="flex-1 px-6 py-8 max-w-3xl mx-auto w-full">
+    <div class="space-y-8">
+      <h1 class="font-display text-2xl font-semibold text-text">Settings</h1>
       <div id="app">Loading...</div>
       <div id="forms-container" class="space-y-4"></div>
     </div>
   </main>
-  <footer class="border-t border-gray-100 px-6 py-4 text-xs text-gray-400">
+  <footer class="border-t border-border px-6 py-4 text-xs text-text-muted text-center">
     Built with GOVA
   </footer>
   <script type="module" src="/static/js/settings.js"></script>

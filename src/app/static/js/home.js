@@ -1,4 +1,5 @@
 import { post } from '/static/js/lib/api.js';
+import { initNav } from '/static/js/lib/nav.js';
 
 const app = document.getElementById('app');
 
@@ -16,20 +17,20 @@ let errorMsg;
 
 function render() {
   const wrapper = document.createElement('div');
-  wrapper.className = 'py-12 space-y-8';
+  wrapper.className = 'max-w-[640px] mx-auto py-12 space-y-8';
 
   const hero = document.createElement('div');
   hero.className = 'text-center space-y-3';
   const h1 = document.createElement('h1');
-  h1.className = 'text-4xl font-bold tracking-tight text-gray-900';
+  h1.className = 'font-display text-4xl font-semibold text-text';
   h1.textContent = 'Ask ResearchIQ';
   const tagline = document.createElement('p');
-  tagline.className = 'text-gray-500 text-lg';
+  tagline.className = 'text-text-muted text-lg';
   tagline.textContent = 'Get a plain-language summary of the peer-reviewed evidence.';
   hero.append(h1, tagline);
 
   const card = document.createElement('div');
-  card.className = 'bg-white border border-gray-200 rounded-lg p-6 space-y-4 max-w-2xl mx-auto';
+  card.className = 'bg-surface border border-border rounded-lg p-6 space-y-4';
 
   errorMsg = document.createElement('div');
   errorMsg.className = 'hidden border border-red-200 bg-red-50 text-red-700 text-sm px-4 py-3 rounded';
@@ -39,7 +40,7 @@ function render() {
   form.className = 'space-y-4';
 
   const label = document.createElement('label');
-  label.className = 'block text-sm font-medium text-gray-700 mb-1';
+  label.className = 'block text-sm font-medium text-text mb-1';
   label.setAttribute('for', 'question');
   label.textContent = 'Your health question';
 
@@ -50,10 +51,10 @@ function render() {
   textarea.required = true;
   textarea.minLength = 10;
   textarea.placeholder = 'e.g. Is intermittent fasting good for weight loss?';
-  textarea.className = 'block w-full border border-gray-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-gray-900';
+  textarea.className = 'block w-full border border-border rounded px-3 py-2 text-sm text-text focus:outline-none focus:border-primary transition-colors';
 
   const chipsLabel = document.createElement('p');
-  chipsLabel.className = 'text-xs text-gray-500';
+  chipsLabel.className = 'text-xs text-text-muted';
   chipsLabel.textContent = 'Or try one of these:';
 
   const chipsWrap = document.createElement('div');
@@ -61,7 +62,7 @@ function render() {
   EXAMPLE_QUESTIONS.forEach((q) => {
     const chip = document.createElement('button');
     chip.type = 'button';
-    chip.className = 'text-xs border border-gray-200 rounded px-3 py-1.5 text-gray-600 hover:bg-gray-100 transition-colors';
+    chip.className = 'text-xs border border-border rounded-full px-3 py-1.5 text-text-muted hover:bg-hover hover:border-primary hover:text-primary transition-colors';
     chip.textContent = q;
     chip.addEventListener('click', () => {
       textarea.value = q;
@@ -72,7 +73,7 @@ function render() {
 
   submitBtn = document.createElement('button');
   submitBtn.type = 'submit';
-  submitBtn.className = 'w-full px-4 py-2 bg-gray-900 text-white text-sm rounded hover:bg-gray-700 transition-colors';
+  submitBtn.className = 'w-full px-4 py-2.5 bg-primary text-white text-sm font-medium rounded hover:bg-primary-hover transition-colors';
   submitBtn.textContent = 'Start research';
 
   form.append(label, textarea, chipsLabel, chipsWrap, submitBtn);
@@ -88,7 +89,7 @@ function setSubmitting(isSubmitting) {
   submitBtn.replaceChildren();
   if (isSubmitting) {
     const spinner = document.createElement('span');
-    spinner.className = 'spinner';
+    spinner.className = 'inline-block w-3.5 h-3.5 rounded-full border-2 border-white/40 border-t-white animate-spin align-middle';
     submitBtn.appendChild(spinner);
     submitBtn.appendChild(document.createTextNode(' Starting…'));
   } else {
@@ -120,4 +121,5 @@ async function onSubmit(e) {
   errorMsg.classList.remove('hidden');
 }
 
+initNav();
 render();

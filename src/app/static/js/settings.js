@@ -1,9 +1,12 @@
 import { get, post } from '/static/js/lib/api.js';
 import { requireAuth } from '/static/js/lib/auth.js';
+import { initNav } from '/static/js/lib/nav.js';
 
 const app = document.getElementById('app');
 
 async function init() {
+  initNav();
+
   const user = await requireAuth();
   if (!user) return;
 
@@ -25,7 +28,7 @@ function renderError(msg) {
 function makeSection(heading) {
   const section = document.createElement('div');
   const h2 = document.createElement('h2');
-  h2.className = 'text-sm font-semibold text-gray-900 mb-2';
+  h2.className = 'font-display text-lg font-semibold text-text mb-3';
   h2.textContent = heading;
   section.appendChild(h2);
   return section;
@@ -61,41 +64,41 @@ function render(data) {
 function renderAccountSection(user) {
   const section = makeSection('Account');
   const card = document.createElement('div');
-  card.className = 'bg-white border border-gray-200 rounded-lg p-6 space-y-3';
+  card.className = 'bg-surface border border-border rounded-lg p-6 space-y-3';
 
   const emailRow = document.createElement('p');
-  emailRow.className = 'text-sm text-gray-700';
+  emailRow.className = 'text-sm text-text';
   const emailLabel = document.createElement('span');
-  emailLabel.className = 'text-gray-500';
+  emailLabel.className = 'text-text-muted';
   emailLabel.textContent = 'Email: ';
   emailRow.appendChild(emailLabel);
   emailRow.appendChild(document.createTextNode(user.email ?? ''));
   card.appendChild(emailRow);
 
   const memberSinceRow = document.createElement('p');
-  memberSinceRow.className = 'text-sm text-gray-700';
+  memberSinceRow.className = 'text-sm text-text';
   const memberLabel = document.createElement('span');
-  memberLabel.className = 'text-gray-500';
+  memberLabel.className = 'text-text-muted';
   memberLabel.textContent = 'Member since: ';
   memberSinceRow.appendChild(memberLabel);
   memberSinceRow.appendChild(document.createTextNode(formatDate(user.created_at)));
   card.appendChild(memberSinceRow);
 
   const balanceRow = document.createElement('p');
-  balanceRow.className = 'text-sm text-gray-700 flex items-center gap-2';
+  balanceRow.className = 'text-sm text-text flex items-center gap-2';
   const balanceLabel = document.createElement('span');
-  balanceLabel.className = 'text-gray-500';
+  balanceLabel.className = 'text-text-muted';
   balanceLabel.textContent = 'Credit balance: ';
   balanceRow.appendChild(balanceLabel);
 
   if (user.lifetime_access) {
     const badge = document.createElement('span');
-    badge.className = 'badge';
+    badge.className = 'inline-block text-xs font-semibold px-2 py-0.5 rounded-full bg-green-100 text-green-800';
     badge.textContent = '∞';
     balanceRow.appendChild(badge);
   } else {
     const balance = document.createElement('span');
-    balance.className = 'font-medium text-gray-900';
+    balance.className = 'font-medium text-text';
     balance.textContent = String(user.credits ?? 0);
     balanceRow.appendChild(balance);
   }
@@ -110,46 +113,50 @@ function renderPacksSection(packs) {
 
   if (packs.length === 0) {
     const p = document.createElement('p');
-    p.className = 'text-sm text-gray-500';
+    p.className = 'text-sm text-text-muted';
     p.textContent = 'No credit packs available.';
     section.appendChild(p);
     return section;
   }
 
-  const grid = document.createElement('div');
-  grid.className = 'flex flex-wrap gap-4';
-  packs.forEach((pack) => grid.appendChild(renderPackCard(pack)));
-  section.appendChild(grid);
+  const list = document.createElement('div');
+  list.className = 'flex flex-col gap-3';
+  packs.forEach((pack) => list.appendChild(renderPackCard(pack)));
+  section.appendChild(list);
   return section;
 }
 
 function renderPackCard(pack) {
   const card = document.createElement('div');
-  card.className = 'bg-white border border-gray-200 rounded-lg p-4 flex flex-col gap-3 w-full max-w-sm';
+  card.className = 'bg-surface border border-border rounded-lg p-4 sm:p-6 flex items-center justify-between gap-4';
+
+  const info = document.createElement('div');
+  info.className = 'min-w-0';
 
   const name = document.createElement('p');
-  name.className = 'text-sm font-semibold text-gray-900';
+  name.className = 'text-sm font-semibold text-text';
   name.textContent = capitalize(pack.id ?? '');
-  card.appendChild(name);
+  info.appendChild(name);
 
   const credits = document.createElement('p');
-  credits.className = 'text-2xl font-semibold tracking-tight';
+  credits.className = 'text-xl font-display font-semibold text-text mt-1';
   credits.textContent = `${pack.credits ?? 0} credits`;
-  card.appendChild(credits);
+  info.appendChild(credits);
 
   const price = document.createElement('p');
-  price.className = 'text-sm text-gray-500';
+  price.className = 'text-sm text-text-muted mt-1';
   price.textContent = pack.price ?? '';
-  card.appendChild(price);
+  info.appendChild(price);
 
   const buyBtn = document.createElement('button');
   buyBtn.type = 'button';
-  buyBtn.className = 'px-4 py-2 bg-gray-900 text-white text-sm rounded hover:bg-gray-700 transition-colors';
+  buyBtn.className = 'px-4 py-2 bg-primary text-white text-sm font-medium rounded hover:bg-primary-hover transition-colors shrink-0';
   buyBtn.textContent = 'Buy';
 
   if (!pack.price_id) {
     buyBtn.disabled = true;
     buyBtn.title = 'This pack is not currently available.';
+    buyBtn.className = 'px-4 py-2 bg-surface-2 text-text-muted text-sm font-medium rounded shrink-0 cursor-not-allowed';
   }
 
   buyBtn.addEventListener('click', async () => {
@@ -166,7 +173,7 @@ function renderPackCard(pack) {
     card.appendChild(errEl);
   });
 
-  card.appendChild(buyBtn);
+  card.append(info, buyBtn);
   return card;
 }
 
@@ -175,25 +182,24 @@ function renderHistorySection(transactions) {
 
   if (transactions.length === 0) {
     const p = document.createElement('p');
-    p.className = 'text-sm text-gray-500';
+    p.className = 'text-sm text-text-muted';
     p.textContent = 'No transactions yet.';
     section.appendChild(p);
     return section;
   }
 
   const tableWrap = document.createElement('div');
-  tableWrap.className = 'bg-white border border-gray-200 rounded-lg';
+  tableWrap.className = 'bg-surface border border-border rounded-lg overflow-x-auto';
 
   const table = document.createElement('table');
   table.className = 'w-full text-sm';
 
   const thead = document.createElement('thead');
   const headRow = document.createElement('tr');
-  headRow.className = 'border-b border-gray-200 text-gray-500';
+  headRow.className = 'border-b border-border text-text-muted';
   ['Date', 'Type', 'Amount', 'Description'].forEach((label) => {
     const th = document.createElement('th');
-    th.className = 'px-4 py-2 font-medium';
-    th.style.textAlign = 'left';
+    th.className = 'px-4 py-2 font-medium text-left';
     th.textContent = label;
     headRow.appendChild(th);
   });
@@ -203,26 +209,26 @@ function renderHistorySection(transactions) {
   const tbody = document.createElement('tbody');
   transactions.forEach((tx) => {
     const row = document.createElement('tr');
-    row.className = 'border-b border-gray-100';
+    row.className = 'border-b border-border last:border-b-0';
 
     const dateCell = document.createElement('td');
-    dateCell.className = 'px-4 py-2 text-gray-500';
+    dateCell.className = 'px-4 py-2 text-text-muted';
     dateCell.textContent = formatDate(tx.created_at);
     row.appendChild(dateCell);
 
     const typeCell = document.createElement('td');
-    typeCell.className = 'px-4 py-2 text-gray-700';
+    typeCell.className = 'px-4 py-2 text-text';
     typeCell.textContent = capitalize(tx.type ?? '');
     row.appendChild(typeCell);
 
     const amountCell = document.createElement('td');
-    amountCell.className = 'px-4 py-2 text-gray-900 font-medium';
+    amountCell.className = 'px-4 py-2 text-text font-medium';
     const amount = Number(tx.amount ?? 0);
     amountCell.textContent = amount > 0 ? `+${amount}` : String(amount);
     row.appendChild(amountCell);
 
     const descCell = document.createElement('td');
-    descCell.className = 'px-4 py-2 text-gray-500';
+    descCell.className = 'px-4 py-2 text-text-muted';
     descCell.textContent = tx.description ?? '';
     row.appendChild(descCell);
 

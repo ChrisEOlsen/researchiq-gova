@@ -1,3 +1,47 @@
 @import "tailwindcss";
 @source "../js/**/*.js";
 @source "../pages/**/*.html";
+
+@theme {
+  /* ResearchIQ warm palette */
+  --color-bg:            #faf8f5;
+  --color-surface:       #ffffff;
+  --color-surface-2:     #f3ede6;
+  --color-text:          #292524;
+  --color-text-muted:    #78716c;
+  --color-border:        #e8e0d8;
+  --color-hover:         #f5f0ea;
+  --color-primary:       #c0392b;
+  --color-primary-hover: #a93226;
+
+  /* Typography */
+  --font-display: "Playfair Display", Georgia, serif;
+  --font-sans:    "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+
+  /* Animations */
+  --animate-pulse-dot: pulse-dot 1.4s ease-in-out infinite;
+  --animate-spin:      spin 0.7s linear infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%      { transform: scale(1.5); opacity: 0.4; }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+body {
+  font-family: var(--font-sans);
+  font-weight: 300;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+}

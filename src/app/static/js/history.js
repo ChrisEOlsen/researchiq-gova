@@ -1,4 +1,5 @@
 import { get, post } from '/static/js/lib/api.js';
+import { initNav } from '/static/js/lib/nav.js';
 
 const app = document.getElementById('app');
 
@@ -12,6 +13,8 @@ const STAGE_LABELS = {
 const pollers = new Map();
 
 async function init() {
+  initNav();
+
   const res = await get('/api/research_history');
   if (!res.ok) {
     renderError(res.error ?? 'Failed to load history.');
@@ -31,7 +34,7 @@ function renderJobs(jobs) {
   app.replaceChildren();
   if (jobs.length === 0) {
     const p = document.createElement('p');
-    p.className = 'text-sm text-gray-500';
+    p.className = 'text-sm text-text-muted';
     p.textContent = 'No research yet. Ask a question from the home page to get started.';
     app.appendChild(p);
     return;
@@ -44,35 +47,35 @@ function renderJobs(jobs) {
 
 function renderJobCard(job) {
   const card = document.createElement('div');
-  card.className = 'bg-white border border-gray-200 rounded-lg p-4 flex items-center justify-between gap-4';
+  card.className = 'bg-surface border border-border rounded-lg p-4 sm:p-6 flex items-center justify-between gap-4';
 
   const left = document.createElement('div');
   left.className = 'min-w-0';
 
   const title = document.createElement('p');
-  title.className = 'text-sm font-medium text-gray-900';
+  title.className = 'text-sm font-medium text-text truncate';
   title.textContent = job.title || job.question;
   left.appendChild(title);
 
   const statusEl = document.createElement('p');
-  statusEl.className = 'text-xs text-gray-500 mt-1';
+  statusEl.className = 'text-xs text-text-muted mt-1';
   setStatusText(statusEl, job);
   left.appendChild(statusEl);
 
   const right = document.createElement('div');
-  right.className = 'flex items-center gap-3 shrink-0';
+  right.className = 'flex items-center gap-4 shrink-0';
 
   if (job.status === 'done') {
     const viewLink = document.createElement('a');
     viewLink.href = `/result?id=${job.id}`;
-    viewLink.className = 'text-xs text-blue-600 hover:underline';
+    viewLink.className = 'text-xs font-medium text-primary hover:text-primary-hover';
     viewLink.textContent = 'View';
     right.appendChild(viewLink);
   }
 
   const delBtn = document.createElement('button');
   delBtn.type = 'button';
-  delBtn.className = 'text-xs text-red-600 hover:underline';
+  delBtn.className = 'text-xs text-text-muted hover:text-primary transition-colors';
   delBtn.textContent = 'Delete';
   delBtn.addEventListener('click', async () => {
     delBtn.disabled = true;
@@ -100,7 +103,7 @@ function setStatusText(el, job) {
 
   if (job.status === 'failed') {
     const badge = document.createElement('span');
-    badge.className = 'badge badge-failed';
+    badge.className = 'inline-block text-xs font-semibold px-2 py-0.5 rounded-full bg-red-100 text-red-800';
     badge.textContent = 'Failed';
     if (job.error_message) {
       badge.title = job.error_message;
@@ -111,14 +114,14 @@ function setStatusText(el, job) {
 
   if (job.status === 'done') {
     const badge = document.createElement('span');
-    badge.className = 'badge badge-done';
+    badge.className = 'inline-block text-xs font-semibold px-2 py-0.5 rounded-full bg-green-100 text-green-800';
     badge.textContent = 'Done';
     el.appendChild(badge);
     return;
   }
 
   const dot = document.createElement('span');
-  dot.className = 'pulse-dot';
+  dot.className = 'inline-block w-2 h-2 rounded-full bg-primary animate-pulse-dot align-middle';
   el.appendChild(dot);
 
   let text = ' ' + (STAGE_LABELS[job.pipeline_stage] || 'Processing…');
