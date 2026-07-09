@@ -1,0 +1,1773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>InBody570 — Personal Trainer's Reading Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&family=Azeret+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+<style>
+:root {
+  --bg: #f6f4f0;
+  --surface: #ffffff;
+  --surface2: #f0ede8;
+  --surface3: #e8e4de;
+  --border: #ddd9d2;
+  --text: #1a1714;
+  --text-dim: #7a756d;
+  --accent: #E8002D;
+  --accent-light: rgba(232,0,45,0.09);
+  --accent-mid: rgba(232,0,45,0.18);
+  --green: #166534;
+  --green-bg: rgba(22,101,52,0.09);
+  --green-bar: #22c55e;
+  --yellow: #92400e;
+  --yellow-bg: rgba(146,64,14,0.09);
+  --yellow-bar: #f59e0b;
+  --red-s: #991b1b;
+  --red-bg: rgba(153,27,27,0.09);
+  --red-bar: #ef4444;
+  --font-body: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-mono: 'Azeret Mono', 'SF Mono', Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #100f0a;
+    --surface: #1b1a14;
+    --surface2: #242219;
+    --surface3: #2e2c20;
+    --border: #333228;
+    --text: #e8e6de;
+    --text-dim: #8a8779;
+    --accent: #ff2244;
+    --accent-light: rgba(255,34,68,0.10);
+    --accent-mid: rgba(255,34,68,0.20);
+    --green: #4ade80;
+    --green-bg: rgba(74,222,128,0.10);
+    --green-bar: #4ade80;
+    --yellow: #fbbf24;
+    --yellow-bg: rgba(251,191,36,0.10);
+    --yellow-bar: #fbbf24;
+    --red-s: #f87171;
+    --red-bg: rgba(248,113,113,0.10);
+    --red-bar: #f87171;
+  }
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 15px;
+  line-height: 1.65;
+  padding: 32px 44px 100px;
+}
+.wrap {
+  max-width: 1380px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 185px 1fr;
+  gap: 0 52px;
+}
+.main { min-width: 0; }
+
+/* ──────────────── TOC ──────────────── */
+.toc {
+  position: sticky;
+  top: 24px;
+  align-self: start;
+  padding: 14px 0;
+  grid-row: 1 / -1;
+  max-height: calc(100dvh - 48px);
+  overflow-y: auto;
+}
+.toc::-webkit-scrollbar { width: 3px; }
+.toc::-webkit-scrollbar-thumb { background: var(--surface3); border-radius: 2px; }
+.toc-title {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+  padding: 0 0 10px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.toc a {
+  display: block;
+  font-size: 11px;
+  color: var(--text-dim);
+  text-decoration: none;
+  padding: 4px 8px;
+  border-radius: 5px;
+  border-left: 2px solid transparent;
+  transition: all 0.15s;
+  line-height: 1.4;
+  margin-bottom: 1px;
+}
+.toc a:hover { color: var(--text); background: var(--surface2); }
+.toc a.active { color: var(--accent); border-left-color: var(--accent); background: var(--accent-light); }
+
+/* ──────────────── HEADER ──────────────── */
+.page-header {
+  padding: 28px 0 22px;
+  border-bottom: 2px solid var(--accent);
+  margin-bottom: 28px;
+}
+.ib-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.ib-bar { width: 4px; height: 22px; background: var(--accent); border-radius: 2px; }
+.ib-name { font-family: var(--font-mono); font-size: 13px; font-weight: 600; color: var(--accent); letter-spacing: 1px; }
+.ib-model { font-family: var(--font-mono); font-size: 10px; color: var(--text-dim); background: var(--surface2); padding: 2px 8px; border-radius: 12px; }
+h1 { font-size: 1.85rem; font-weight: 800; line-height: 1.2; }
+.subtitle { color: var(--text-dim); font-size: 13px; margin-top: 5px; }
+.client-chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
+.chip {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  padding: 3px 10px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  color: var(--text-dim);
+}
+.chip strong { color: var(--text); font-weight: 600; }
+
+/* ──────────────── SUMMARY DASHBOARD ──────────────── */
+.dashboard-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+  margin-bottom: 12px;
+}
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.kpi-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 18px 14px;
+  position: relative;
+  overflow: hidden;
+}
+.kpi-card::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  border-radius: 12px 12px 0 0;
+}
+.kpi-card.good::after { background: var(--green-bar); }
+.kpi-card.watch::after { background: var(--yellow-bar); }
+.kpi-card.alert::after { background: var(--red-bar); }
+.kpi-lbl { font-family: var(--font-mono); font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-dim); margin-bottom: 5px; }
+.kpi-val { font-size: 2rem; font-weight: 800; line-height: 1; margin-bottom: 3px; }
+.kpi-card.good .kpi-val { color: var(--green); }
+.kpi-card.watch .kpi-val { color: var(--yellow); }
+.kpi-card.alert .kpi-val { color: var(--red-s); }
+.kpi-note { font-size: 11px; color: var(--text-dim); line-height: 1.45; }
+.kpi-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-family: var(--font-mono);
+  font-size: 8px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 2px 6px;
+  border-radius: 20px;
+  margin-top: 6px;
+}
+.kpi-badge.good { background: var(--green-bg); color: var(--green); }
+.kpi-badge.watch { background: var(--yellow-bg); color: var(--yellow); }
+.kpi-badge.alert { background: var(--red-bg); color: var(--red-s); }
+
+/* ──────────────── SECTION STRUCTURE ──────────────── */
+.sec-head {
+  font-size: 1.3rem;
+  font-weight: 700;
+  padding: 30px 0 4px;
+  margin-top: 12px;
+  scroll-margin-top: 24px;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  border-top: 1px solid var(--border);
+}
+.sec-num { font-family: var(--font-mono); font-size: 11px; color: var(--accent); font-weight: 600; }
+.sec-badge {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 2px 7px;
+  border-radius: 20px;
+}
+.sec-badge.good { background: var(--green-bg); color: var(--green); }
+.sec-badge.watch { background: var(--yellow-bg); color: var(--yellow); }
+.sec-badge.alert { background: var(--red-bg); color: var(--red-s); }
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 22px 26px;
+  margin: 14px 0 28px;
+}
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+.col-3-1 { display: grid; grid-template-columns: 2fr 1fr; gap: 24px; }
+
+/* ──────────────── TRAINER SCRIPT ──────────────── */
+.trainer-script {
+  background: var(--accent-light);
+  border: 1px solid var(--accent-mid);
+  border-left: 3px solid var(--accent);
+  border-radius: 0 10px 10px 0;
+  padding: 15px 20px;
+  margin-top: 18px;
+}
+.ts-label {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--accent);
+  margin-bottom: 7px;
+}
+.trainer-script p { font-size: 13.5px; font-style: italic; line-height: 1.7; }
+
+/* ──────────────── INFO BOXES ──────────────── */
+.info-box { background: var(--surface2); border-radius: 10px; padding: 15px 18px; }
+.info-box h4 {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--text-dim);
+  margin-bottom: 8px;
+}
+.info-box p { font-size: 13px; line-height: 1.65; }
+
+.range-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface2);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+}
+.range-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+/* ──────────────── BAR VISUALIZATIONS ──────────────── */
+.bar-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 9px 0;
+}
+.bar-lbl { font-size: 13px; width: 90px; flex-shrink: 0; }
+.bar-sublbl { font-size: 11px; color: var(--text-dim); }
+.bar-track {
+  flex: 1;
+  height: 13px;
+  background: var(--surface2);
+  border-radius: 7px;
+  overflow: hidden;
+  position: relative;
+}
+.bar-fill { height: 100%; border-radius: 7px; transition: width 1.2s cubic-bezier(0.4,0,0.2,1); }
+.bar-val {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  width: 56px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* Muscle-fat relative bars */
+.mf-bar-wrap { margin: 10px 0; }
+.mf-bar-row { display: flex; align-items: center; gap: 12px; margin: 12px 0; }
+.mf-label { font-size: 13px; font-weight: 600; width: 100px; flex-shrink: 0; }
+.mf-track {
+  flex: 1;
+  height: 18px;
+  background: var(--surface2);
+  border-radius: 9px;
+  position: relative;
+  overflow: visible;
+}
+.mf-fill {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+}
+.mf-ideal-line {
+  position: absolute;
+  top: -4px;
+  height: 26px;
+  width: 2px;
+  background: var(--text);
+  border-radius: 1px;
+  opacity: 0.4;
+}
+.mf-ideal-label {
+  position: absolute;
+  top: -20px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-dim);
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+.mf-val {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  width: 80px;
+  text-align: right;
+  flex-shrink: 0;
+}
+.mf-scale-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 0 0 112px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-dim);
+  margin-top: 4px;
+}
+
+/* ──────────────── STACKED COMPOSITION BAR ──────────────── */
+.comp-stack {
+  height: 44px;
+  display: flex;
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 16px 0 8px;
+}
+.comp-seg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.9);
+  transition: flex 0.8s ease;
+  min-width: 0;
+  overflow: hidden;
+}
+.comp-legend {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+.legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--text-dim); }
+.legend-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+
+/* ──────────────── GAUGES ──────────────── */
+.gauge-container { display: flex; align-items: flex-start; gap: 32px; flex-wrap: wrap; }
+.gauge-item { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.gauge-svg-wrap { position: relative; }
+.gauge-center-text {
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+}
+.gauge-val { font-family: var(--font-mono); font-size: 1.4rem; font-weight: 700; line-height: 1; }
+.gauge-unit { font-family: var(--font-mono); font-size: 9px; color: var(--text-dim); }
+.gauge-title { font-size: 12px; font-weight: 600; text-align: center; }
+.gauge-status { font-size: 11px; color: var(--text-dim); text-align: center; }
+
+/* ──────────────── SEGMENTAL FIGURE ──────────────── */
+.seg-figure-layout { display: flex; gap: 32px; align-items: flex-start; }
+.body-fig-wrap { flex-shrink: 0; display: flex; justify-content: center; }
+.seg-bars-col { flex: 1; }
+.seg-bar-row { margin: 8px 0; }
+.seg-bar-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px; }
+.seg-bar-head span { font-size: 13px; }
+.seg-bar-pct {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+}
+.seg-track {
+  height: 10px;
+  background: var(--surface2);
+  border-radius: 5px;
+  position: relative;
+  overflow: visible;
+}
+.seg-fill { height: 100%; border-radius: 5px; }
+.seg-ideal-mark {
+  position: absolute;
+  top: -3px;
+  height: 16px;
+  width: 2px;
+  background: var(--text-dim);
+  border-radius: 1px;
+  opacity: 0.5;
+}
+
+/* ──────────────── TABLE ──────────────── */
+.data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.data-table th {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--text-dim);
+  padding: 8px 12px;
+  text-align: left;
+  border-bottom: 2px solid var(--border);
+  white-space: nowrap;
+}
+.data-table td {
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+.data-table tr:last-child td { border-bottom: none; }
+.data-table tr.current-row td { background: var(--accent-light); font-weight: 600; }
+.td-mono { font-family: var(--font-mono); font-size: 12px; }
+.td-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 2px 6px;
+  border-radius: 10px;
+}
+.td-status.good { background: var(--green-bg); color: var(--green); }
+.td-status.watch { background: var(--yellow-bg); color: var(--yellow); }
+.td-status.alert { background: var(--red-bg); color: var(--red-s); }
+
+/* ──────────────── IMPEDANCE GRID ──────────────── */
+.imp-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 6px;
+}
+.imp-cell {
+  background: var(--surface2);
+  border-radius: 8px;
+  padding: 10px 8px;
+  text-align: center;
+}
+.imp-cell.header { background: var(--surface3); }
+.imp-seg { font-family: var(--font-mono); font-size: 9px; font-weight: 700; text-transform: uppercase; color: var(--text-dim); letter-spacing: 1px; }
+.imp-freq { font-family: var(--font-mono); font-size: 9px; color: var(--text-dim); margin-bottom: 4px; }
+.imp-val { font-family: var(--font-mono); font-size: 1rem; font-weight: 700; color: var(--text); }
+.imp-unit { font-family: var(--font-mono); font-size: 9px; color: var(--text-dim); }
+
+/* ──────────────── DIVIDER ──────────────── */
+.divider { height: 1px; background: var(--border); margin: 16px 0; }
+
+/* ──────────────── UTILITIES ──────────────── */
+p + p { margin-top: 10px; }
+strong { font-weight: 600; }
+.clr-green { color: var(--green); font-weight: 600; }
+.clr-yellow { color: var(--yellow); font-weight: 600; }
+.clr-red { color: var(--red-s); font-weight: 600; }
+.clr-accent { color: var(--accent); font-weight: 600; }
+.small { font-size: 12px; color: var(--text-dim); }
+.mono { font-family: var(--font-mono); }
+.mt-4 { margin-top: 4px; }
+.mt-8 { margin-top: 8px; }
+.mt-12 { margin-top: 12px; }
+.mt-16 { margin-top: 16px; }
+.mb-12 { margin-bottom: 12px; }
+
+/* ──────────────── CONTROL TARGETS BOX ──────────────── */
+.control-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: var(--surface2);
+  border-radius: 10px;
+  margin: 12px 0;
+}
+.control-arrow { font-size: 1.5rem; font-weight: 800; flex-shrink: 0; }
+.control-label { font-size: 13px; flex: 1; }
+.control-val { font-family: var(--font-mono); font-size: 1.4rem; font-weight: 800; flex-shrink: 0; }
+
+/* ──────────────── CHART CONTAINER ──────────────── */
+.chart-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 18px;
+  position: relative;
+}
+
+/* ──────────────── RESPONSIVE ──────────────── */
+@media (max-width: 1020px) {
+  .wrap { grid-template-columns: 1fr; }
+  body { padding: 0 20px 60px; }
+  .toc {
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    max-height: none;
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 0;
+    margin: 0 -20px;
+    padding-left: 20px;
+    padding-right: 20px;
+    grid-row: auto;
+  }
+  .toc::-webkit-scrollbar { display: none; }
+  .toc-title { display: none; }
+  .toc a {
+    white-space: nowrap;
+    flex-shrink: 0;
+    border-left: none;
+    border-bottom: 2px solid transparent;
+    border-radius: 4px 4px 0 0;
+    padding: 6px 10px;
+    font-size: 10px;
+  }
+  .toc a.active { border-left: none; border-bottom-color: var(--accent); background: var(--accent-light); }
+  .main { padding-top: 20px; }
+  .sec-head { scroll-margin-top: 52px; }
+  .two-col, .three-col, .col-3-1 { grid-template-columns: 1fr; }
+  .summary-grid { grid-template-columns: repeat(2, 1fr); }
+  .seg-figure-layout { flex-direction: column; }
+}
+@media print {
+  .toc { display: none; }
+  .wrap { grid-template-columns: 1fr; }
+  body { padding: 20px; }
+  .card { break-inside: avoid; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
+</style>
+</head>
+<body>
+<a href="https://researchiq.ai" style="position:fixed;top:1rem;right:1.25rem;font-size:0.8125rem;color:var(--text-dim);text-decoration:none;z-index:100;background:var(--surface);border:1px solid var(--border);padding:0.375rem 0.75rem;border-radius:999px;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--text-dim)'">Check out researchiq.ai →</a>
+<div class="wrap">
+
+<!-- ═══════════════════ TOC ═══════════════════ -->
+<nav class="toc" id="toc">
+  <div class="toc-title">Contents</div>
+  <a href="#s0">Summary</a>
+  <a href="#s1">1. Body Composition</a>
+  <a href="#s2">2. Muscle-Fat Analysis</a>
+  <a href="#s3">3. Body Fat Analysis</a>
+  <a href="#s4">4. Segmental Lean</a>
+  <a href="#s5">5. ECW/TBW Ratio</a>
+  <a href="#s6">6. History</a>
+  <a href="#s7">7. Control Targets</a>
+  <a href="#s8">8. Segmental Fat</a>
+  <a href="#s9">9. Basal Metabolic Rate</a>
+  <a href="#s10">10. Visceral Fat</a>
+  <a href="#s11">11. Impedance</a>
+  <a href="#s12">12. Interpretation</a>
+</nav>
+
+<!-- ═══════════════════ MAIN ═══════════════════ -->
+<div class="main">
+
+<!-- HEADER -->
+<header class="page-header">
+  <div class="ib-brand">
+    <div class="ib-bar"></div>
+    <span class="ib-name">InBody</span>
+    <span class="ib-model">570</span>
+  </div>
+  <h1>Personal Trainer's Reading Guide</h1>
+  <p class="subtitle">How to read, understand, and explain every metric on the InBody570 body composition report</p>
+  <div class="client-chips">
+    <span class="chip">Client <strong>Jane Doe</strong></span>
+    <span class="chip">Age <strong>31</strong></span>
+    <span class="chip">Height <strong>5'5"</strong></span>
+    <span class="chip">Gender <strong>Female</strong></span>
+    <span class="chip">Test Date <strong>02/28/2020</strong></span>
+    <span class="chip">Device <strong>InBody570</strong></span>
+  </div>
+</header>
+
+<!-- ═══════════════════ SUMMARY DASHBOARD ═══════════════════ -->
+<div id="s0">
+  <div class="dashboard-label">Key Takeaways — At a Glance</div>
+  <div class="summary-grid">
+    <div class="kpi-card watch">
+      <div class="kpi-lbl">Weight</div>
+      <div class="kpi-val">135.4</div>
+      <div class="kpi-note">lbs total body weight</div>
+      <div class="kpi-badge watch">Near Target</div>
+    </div>
+    <div class="kpi-card alert">
+      <div class="kpi-lbl">Body Fat %</div>
+      <div class="kpi-val">35%</div>
+      <div class="kpi-note">Healthy target: 20–30%</div>
+      <div class="kpi-badge alert">High</div>
+    </div>
+    <div class="kpi-card watch">
+      <div class="kpi-lbl">Muscle Mass</div>
+      <div class="kpi-val">47.6</div>
+      <div class="kpi-note">lbs skeletal muscle — 84% of ideal</div>
+      <div class="kpi-badge watch">Below Target</div>
+    </div>
+    <div class="kpi-card alert">
+      <div class="kpi-lbl">Visceral Fat</div>
+      <div class="kpi-val">Lvl 11</div>
+      <div class="kpi-note">Healthy target: below Level 10</div>
+      <div class="kpi-badge alert">High</div>
+    </div>
+    <div class="kpi-card watch">
+      <div class="kpi-lbl">ECW/TBW</div>
+      <div class="kpi-val">0.376</div>
+      <div class="kpi-note">Borderline (normal ≤0.380)</div>
+      <div class="kpi-badge watch">Monitor</div>
+    </div>
+    <div class="kpi-card good">
+      <div class="kpi-lbl">BMR</div>
+      <div class="kpi-val">1,231</div>
+      <div class="kpi-note">kcal/day resting burn</div>
+      <div class="kpi-badge good">Normal</div>
+    </div>
+  </div>
+  <div class="card" style="background: var(--accent-light); border-color: var(--accent-mid);">
+    <strong style="color: var(--accent);">Priority Action Plan for This Client:</strong>
+    <p class="mt-8">This client has a <strong>healthy BMI (22.5)</strong> but carries <strong>excess body fat (35%)</strong> — primarily in the trunk — while being <strong>slightly undermuscled</strong> across all limbs. The goal is a body recomposition: lose ~18 lbs of fat and gain ~9 lbs of lean muscle. Visceral fat at Level 11 is a metabolic health flag that warrants attention. All four limbs show 85–97% of ideal lean mass, suggesting a whole-body resistance training program with particular attention to arms would be most effective.</p>
+  </div>
+</div>
+
+<!-- ═══════════════════ SECTION 1 — BODY COMPOSITION ═══════════════════ -->
+<div id="s1" class="sec-head"><span class="sec-num">01</span> Body Composition Analysis <span class="sec-badge watch">Review</span></div>
+<div class="card">
+  <div class="two-col">
+    <div>
+      <h3>What This Section Shows</h3>
+      <p class="mt-8">The InBody breaks your client's total weight into <strong>five components</strong> stacked like building blocks. Understanding this breakdown is the foundation of everything else on the scan — it tells you <em>what</em> your client is made of, not just how much they weigh.</p>
+      <div style="margin-top: 20px;">
+        <!-- Stacked Bar -->
+        <div class="comp-stack">
+          <div class="comp-seg" style="flex: 29.5; background: #2563eb;">ICW</div>
+          <div class="comp-seg" style="flex: 17.9; background: #3b82f6;">ECW</div>
+          <div class="comp-seg" style="flex: 16.8; background: #0d9488;">DLM</div>
+          <div class="comp-seg" style="flex: 35.0; background: #dc2626;">Fat</div>
+        </div>
+        <div class="comp-legend">
+          <div class="legend-item"><div class="legend-dot" style="background:#2563eb"></div> Intracellular Water 39.9 lbs</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#3b82f6"></div> Extracellular Water 24.3 lbs</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#0d9488"></div> Dry Lean Mass 22.8 lbs</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#dc2626"></div> Body Fat Mass 47.4 lbs</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <table class="data-table">
+        <thead>
+          <tr><th>Component</th><th>Client</th><th>Meaning</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Intracellular Water</td>
+            <td class="td-mono">39.9 lbs</td>
+            <td class="small">Water inside cells — reflects lean tissue health</td>
+          </tr>
+          <tr>
+            <td>Extracellular Water</td>
+            <td class="td-mono">24.3 lbs</td>
+            <td class="small">Water outside cells — blood, lymph, tissue fluid</td>
+          </tr>
+          <tr>
+            <td>Total Body Water</td>
+            <td class="td-mono" style="color:var(--green);font-weight:700">64.2 lbs</td>
+            <td class="small">ICW + ECW. ~47% of body weight (normal for females)</td>
+          </tr>
+          <tr>
+            <td>Dry Lean Mass</td>
+            <td class="td-mono">22.8 lbs</td>
+            <td class="small">Protein + minerals — actual structural tissue</td>
+          </tr>
+          <tr>
+            <td>Lean Body Mass</td>
+            <td class="td-mono" style="color:var(--yellow);font-weight:700">88.0 lbs</td>
+            <td class="small">TBW + DLM — everything except fat</td>
+          </tr>
+          <tr>
+            <td>Body Fat Mass</td>
+            <td class="td-mono" style="color:var(--red-s);font-weight:700">47.4 lbs</td>
+            <td class="small">Total fat tissue — 35% of body weight</td>
+          </tr>
+          <tr>
+            <td><strong>Weight</strong></td>
+            <td class="td-mono"><strong>135.4 lbs</strong></td>
+            <td class="small">LBM (88.0) + Fat (47.4)</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="info-box mt-12">
+        <h4>Key Formula</h4>
+        <p><strong>Weight = Lean Body Mass + Body Fat Mass</strong><br>135.4 = 88.0 + 47.4<br><br>If your client loses 5 lbs but gains 2 lbs of muscle, the scale only shows –3 lbs. This section explains <em>why</em> weight alone is misleading.</p>
+      </div>
+    </div>
+  </div>
+  <div class="trainer-script">
+    <div class="ts-label">Trainer's Script</div>
+    <p>"So your total weight is 135 pounds — but look at what that actually breaks down into. You've got 88 pounds of lean mass — that's your muscle, water, organs, and bones — and 47 pounds of body fat. The goal isn't just to lose weight, it's to change <em>this ratio</em>: we want to build up the lean side and bring down the fat side. Someone can weigh the same after 3 months but look and feel completely different if they've gained muscle and lost fat."</p>
+  </div>
+</div>
+
+<!-- ═══════════════════ SECTION 2 — MUSCLE-FAT ═══════════════════ -->
+<div id="s2" class="sec-head"><span class="sec-num">02</span> Muscle-Fat Analysis <span class="sec-badge alert">Action Needed</span></div>
+<div class="card">
+  <div class="two-col">
+    <div>
+      <h3>What This Section Shows</h3>
+      <p class="mt-8">This is the <strong>most visual section</strong> of the scan. Three horizontal bars show your client's Weight, Skeletal Muscle Mass (SMM), and Body Fat Mass relative to the <strong>ideal range for their height and gender</strong>. The ideal is shown as a vertical marker at the center of each bar.</p>
+      <p>The goal: Weight and SMM bars should <em>reach or exceed</em> the ideal marker. The Fat bar should <em>stay below</em> it. When the Fat bar is longer than the SMM bar — which is the case here — it's a signal that body fat is above the healthy range while muscle mass has room to grow.</p>
+    </div>
+    <div class="info-box">
+      <h4>The "D-Shape" Pattern</h4>
+      <p>Trainers use the term "D-shape" when the Fat bar is notably longer than the SMM bar. It indicates a body composition opportunity — not enough muscle to optimally fuel metabolism, with body fat above the healthy range. Jane shows this pattern: SMM is 84% of ideal, Fat is 163% of ideal. The priority is <strong>resistance training + moderate, sustainable nutrition changes</strong>.</p>
+    </div>
+  </div>
+  <div class="divider"></div>
+  <!-- Muscle-Fat Bar Chart -->
+  <div style="padding-top: 28px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 8px;">
+      <h3>Client vs. Ideal Range</h3>
+      <span class="small">Vertical line = ideal for this client's height/gender</span>
+    </div>
+    <div class="mf-bar-row" style="margin-top: 24px;">
+      <div class="mf-label">Weight<br><span class="small">135.4 lbs</span></div>
+      <div class="mf-track">
+        <div class="mf-ideal-label" style="left:90%">Ideal</div>
+        <div class="mf-ideal-line" style="left:90%"></div>
+        <div class="mf-fill" style="left:0; width:87%; background: var(--yellow-bar); opacity:0.8;"></div>
+      </div>
+      <div class="mf-val"><span class="clr-yellow">87%</span><br><span class="small">of ideal</span></div>
+    </div>
+    <div class="mf-bar-row">
+      <div class="mf-label">SMM<br><span class="small">47.6 lbs</span></div>
+      <div class="mf-track">
+        <div class="mf-ideal-label" style="left:90%">Ideal</div>
+        <div class="mf-ideal-line" style="left:90%"></div>
+        <div class="mf-fill" style="left:0; width:75%; background: var(--yellow-bar); opacity:0.8;"></div>
+      </div>
+      <div class="mf-val"><span class="clr-yellow">84%</span><br><span class="small">of ideal</span></div>
+    </div>
+    <div class="mf-bar-row">
+      <div class="mf-label">Body Fat<br><span class="small">47.4 lbs</span></div>
+      <div class="mf-track" style="overflow:hidden;">
+        <div class="mf-ideal-label" style="left:54%">Ideal</div>
+        <div class="mf-ideal-line" style="left:54%"></div>
+        <div class="mf-fill" style="left:0; width:88%; background: var(--red-bar); opacity:0.8;"></div>
+      </div>
+      <div class="mf-val"><span class="clr-red">163%</span><br><span class="small">of ideal</span></div>
+    </div>
+    <div class="mf-scale-row">
+      <span>Low ←</span><span>Ideal Range</span><span>→ High</span>
+    </div>
+  </div>
+  <div class="trainer-script">
+    <div class="ts-label">Trainer's Script</div>
+    <p>"Look at these three bars — think of them as a snapshot of your body composition right now. The line in the middle is the ideal for someone your height and gender. For weight, you're very close to that line. For muscle mass, your bar doesn't quite reach it — you're at about 84% of where we'd love to see you. And for body fat, your bar extends past the ideal line — your body fat is above the healthy range for your gender. That's really common and very addressable. Every pound of muscle we build will boost your metabolism and support the fat loss process."</p>
+  </div>
+</div>
+
+<!-- ═══════════════════ SECTION 3 — BODY FAT ANALYSIS ═══════════════════ -->
+<div id="s3" class="sec-head"><span class="sec-num">03</span> Body Fat Analysis <span class="sec-badge good">BMI Good · PBF Above Range</span></div>
+<div class="card">
+  <div class="two-col">
+    <div>
+      <h3>BMI — Body Mass Index</h3>
+      <div class="info-box mt-8">
+        <h4>What it measures</h4>
+        <p>BMI = weight (kg) ÷ height (m)². It's a simple <strong>height-to-weight ratio</strong> used to screen for potential weight problems. It does NOT measure body fat or muscle.</p>
+      </div>
+      <div style="margin-top: 14px;">
+        <div class="bar-row">
+          <span class="bar-lbl">Underweight</span>
+          <div class="bar-track"><div class="bar-fill" style="width:20%; background:#60a5fa"></div></div>
+          <span class="bar-val small">&lt;18.5</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-lbl">Normal ✓</span>
+          <div class="bar-track"><div class="bar-fill" style="width:55%; background:var(--green-bar)"></div></div>
+          <span class="bar-val small">18.5–24.9</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-lbl">Overweight</span>
+          <div class="bar-track"><div class="bar-fill" style="width:70%; background:var(--yellow-bar)"></div></div>
+          <span class="bar-val small">25.0–29.9</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-lbl">High BMI</span>
+          <div class="bar-track"><div class="bar-fill" style="width:90%; background:var(--red-bar)"></div></div>
+          <span class="bar-val small">≥30</span>
+        </div>
+      </div>
+      <div style="margin-top:12px; padding: 12px 16px; background: var(--green-bg); border-radius: 8px; border: 1px solid rgba(22,101,52,0.2);">
+        <strong class="clr-green">Jane's BMI: 22.5</strong> — Normal range.
+        <p class="small mt-4">BMI looks fine — but InBody goes further by showing <em>why</em>. A normal BMI alongside elevated body fat is sometimes called "normal weight, elevated body fat" — the scale reads normal, but the body composition balance has room to improve.</p>
+      </div>
+    </div>
+    <div>
+      <h3>PBF — Percent Body Fat</h3>
+      <div class="info-box mt-8">
+        <h4>What it measures</h4>
+        <p>PBF = (Body Fat Mass ÷ Weight) × 100. This is the <strong>most direct measure of body fat percentage</strong>. Unlike BMI, it directly measures the proportion of the body that is fat tissue. InBody measures this via bioelectrical impedance — far more accurate than BMI alone.</p>
+      </div>
+      <div style="margin-top: 14px;">
+        <div class="bar-row">
+          <span class="bar-lbl">Athletic</span>
+          <div class="bar-track"><div class="bar-fill" style="width:20%; background:#60a5fa"></div></div>
+          <span class="bar-val small">14–20%</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-lbl">Healthy ✓</span>
+          <div class="bar-track"><div class="bar-fill" style="width:50%; background:var(--green-bar)"></div></div>
+          <span class="bar-val small">21–30%</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-lbl">Above Range</span>
+          <div class="bar-track"><div class="bar-fill" style="width:70%; background:var(--yellow-bar)"></div></div>
+          <span class="bar-val small">31–35%</span>
+        </div>
+        <div class="bar-row">
+          <span class="bar-lbl">High</span>
+          <div class="bar-track"><div class="bar-fill" style="width:90%; background:var(--red-bar)"></div></div>
+          <span class="bar-val small">≥36%</span>
+        </div>
+      </div>
+      <div style="margin-top:12px; padding: 12px 16px; background: var(--yellow-bg); border-radius: 8px; border: 1px solid rgba(146,64,14,0.2);">
+        <strong class="clr-yellow">Jane's PBF: 35.0%</strong> — Above healthy range.
+        <p class="small mt-4">Body fat is above the recommended range for her age and gender. The goal is to bring this to 25–28%, which aligns with the –18.3 lbs fat reduction target on her scan.</p>
+      </div>
+    </div>
+  </div>
+  <div class="trainer-script">
+    <div class="ts-label">Trainer's Script</div>
+    <p>"Here's something really important — your BMI is 22.5, which is in the <em>normal</em> range. So if a doctor just looked at your BMI, they might say everything looks fine. But the InBody gives us a much more complete picture. Your body fat percentage is 35%, which is above the healthy range for your gender. What that tells us is that your weight might look normal on paper, but the balance between fat and muscle has room to improve. The good news is your BMI being normal means this isn't about losing a lot of weight — it's about improving your body composition: building a bit more muscle and bringing that body fat percentage down into a healthier range."</p>
+  </div>
+</div>
+
+<!-- ═══════════════════ SECTION 4 — SEGMENTAL LEAN ═══════════════════ -->
+<div id="s4" class="sec-head"><span class="sec-num">04</span> Segmental Lean Analysis <span class="sec-badge watch">Below Ideal</span></div>
+<div class="card">
+  <p>This section breaks down <strong>where lean (muscle) mass is distributed</strong> across the body's five segments. Each segment is compared to the ideal lean mass for that segment given the client's height, weight, and gender. The percentage shows how close to ideal each area is.</p>
+  <div class="info-box mt-12 mb-12">
+    <h4>Why this matters for training</h4>
+    <p>If one segment is significantly below the others, it reveals a <strong>muscular imbalance</strong>. This helps you design targeted programs. For Jane, all segments are below ideal but the arms are the weakest, suggesting upper-body resistance work should be prioritized.</p>
+  </div>
+
+  <!-- Body Figure + Bars -->
+  <div class="seg-figure-layout">
+    <!-- SVG Body Figure -->
+    <div class="body-fig-wrap">
+      <svg viewBox="0 0 130 310" width="130" xmlns="http://www.w3.org/2000/svg">
+        <!-- Head -->
+        <circle cx="65" cy="28" r="22" fill="#e2dfd9" stroke="var(--border)" stroke-width="1.5"/>
+        <circle cx="65" cy="28" r="22" fill="rgba(245,158,11,0.18)" stroke="#f59e0b" stroke-width="1.5"/>
+        <!-- Neck -->
+        <rect x="58" y="48" width="14" height="14" rx="3" fill="#e2dfd9"/>
+        <!-- Trunk — 96.2% -->
+        <rect x="26" y="62" width="78" height="88" rx="10" fill="rgba(245,158,11,0.20)" stroke="#f59e0b" stroke-width="1.8"/>
+        <text x="65" y="107" text-anchor="middle" font-family="'Azeret Mono',monospace" font-size="11" font-weight="700" fill="#92400e">96.2%</text>
+        <text x="65" y="120" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-size="9" fill="#7a756d">Trunk</text>
+        <!-- Left Arm (screen-left = anatomical right) 88.6% -->
+        <rect x="3" y="62" width="20" height="78" rx="9" fill="rgba(245,158,11,0.22)" stroke="#f59e0b" stroke-width="1.8"/>
+        <text x="13" y="100" text-anchor="middle" transform="rotate(-90,13,100)" font-family="'Azeret Mono',monospace" font-size="8" font-weight="700" fill="#92400e">88.6%</text>
+        <!-- Right Arm (screen-right = anatomical left) 85.6% -->
+        <rect x="107" y="62" width="20" height="78" rx="9" fill="rgba(239,68,68,0.18)" stroke="#ef4444" stroke-width="1.8"/>
+        <text x="117" y="100" text-anchor="middle" transform="rotate(90,117,100)" font-family="'Azeret Mono',monospace" font-size="8" font-weight="700" fill="#991b1b">85.6%</text>
+        <!-- Left Leg (screen-left = anatomical right) 89.6% -->
+        <rect x="30" y="153" width="28" height="120" rx="10" fill="rgba(245,158,11,0.20)" stroke="#f59e0b" stroke-width="1.8"/>
+        <text x="44" y="214" text-anchor="middle" font-family="'Azeret Mono',monospace" font-size="8" font-weight="700" fill="#92400e">89.6%</text>
+        <!-- Right Leg (screen-right = anatomical left) 90.7% -->
+        <rect x="72" y="153" width="28" height="120" rx="10" fill="rgba(245,158,11,0.20)" stroke="#f59e0b" stroke-width="1.8"/>
+        <text x="86" y="214" text-anchor="middle" font-family="'Azeret Mono',monospace" font-size="8" font-weight="700" fill="#92400e">90.7%</text>
+        <!-- Labels -->
+        <text x="13" y="148" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-size="8" fill="#7a756d">R Arm</text>
+        <text x="117" y="148" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-size="8" fill="#7a756d">L Arm</text>
+        <text x="44" y="281" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-size="8" fill="#7a756d">R Leg</text>
+        <text x="86" y="281" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-size="8" fill="#7a756d">L Leg</text>
+      </svg>
+    </div>
+
+    <!-- Segmental Bars -->
+    <div class="seg-bars-col">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Segment</th>
+            <th>Lean Mass</th>
+            <th>% of Ideal</th>
+            <th>Status</th>
+            <th style="width:40%">Progress to Ideal</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Right Arm</strong></td>
+            <td class="td-mono">4.17 lbs</td>
+            <td class="td-mono">88.6%</td>
+            <td><span class="td-status watch">Watch</span></td>
+            <td>
+              <div class="seg-track">
+                <div class="seg-fill" style="width:88.6%; background:var(--yellow-bar); height:100%; border-radius:5px;"></div>
+                <div class="seg-ideal-mark" style="left:100%"></div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>Left Arm</strong></td>
+            <td class="td-mono">4.01 lbs</td>
+            <td class="td-mono">85.6%</td>
+            <td><span class="td-status alert">Low</span></td>
+            <td>
+              <div class="seg-track">
+                <div class="seg-fill" style="width:85.6%; background:var(--red-bar); height:100%; border-radius:5px;"></div>
+                <div class="seg-ideal-mark" style="left:100%"></div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>Trunk</strong></td>
+            <td class="td-mono">29.6 lbs</td>
+            <td class="td-mono">96.2%</td>
+            <td><span class="td-status watch">Watch</span></td>
+            <td>
+              <div class="seg-track">
+                <div class="seg-fill" style="width:96.2%; background:var(--yellow-bar); height:100%; border-radius:5px;"></div>
+                <div class="seg-ideal-mark" style="left:100%"></div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>Right Leg</strong></td>
+            <td class="td-mono">13.36 lbs</td>
+            <td class="td-mono">89.6%</td>
+            <td><span class="td-status watch">Watch</span></td>
+            <td>
+              <div class="seg-track">
+                <div class="seg-fill" style="width:89.6%; background:var(--yellow-bar); height:100%; border-radius:5px;"></div>
+                <div class="seg-ideal-mark" style="left:100%"></div>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td><strong>Left Leg</strong></td>
+            <td class="td-mono">13.49 lbs</td>
+            <td class="td-mono">90.7%</td>
+            <td><span class="td-status watch">Watch</span></td>
+            <td>
+              <div class="seg-track">
+                <div class="seg-fill" style="width:90.7%; background:var(--yellow-bar); height:100%; border-radius:5px;"></div>
+                <div class="seg-ideal-mark" style="left:100%"></div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="two-col mt-12">
+        <div class="info-box">
+          <h4>Left vs. Right Imbalance</h4>
+          <p>Left arm (85.6%) is slightly weaker than right arm (88.6%). A 3% gap is common in right-handed individuals. Gaps over 10% warrant corrective unilateral training. Right leg (89.6%) vs. left leg (90.7%) are essentially balanced.</p>
+        </div>
+        <div class="info-box">
+          <h4>Reading the "100% Line"</h4>
+          <p>The vertical marker at 100% = the ideal amount of lean mass for that segment given Jane's height, gender, and body size. Bars below 100% mean underdeveloped muscle. Bars above 100% mean well-developed muscle — a goal for athletic clients.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="trainer-script">
+    <div class="ts-label">Trainer's Script</div>
+    <p>"This part of the scan tells us exactly where you're building muscle — and where we need to focus. The line at the end of each bar is your personal ideal. Right now, all your segments are a bit below that line — your arms are at about 85–89% and your legs are at 90%. Your core and trunk are closest to ideal at 96%. This means we need a well-rounded strength program, but I'd especially focus on upper body pulling movements to bring those arms up. Your legs are actually doing pretty well relative to the rest."</p>
+  </div>
+</div>
+
+<!-- ═══════════════════ SECTION 5 — ECW/TBW ═══════════════════ -->
+<div id="s5" class="sec-head"><span class="sec-num">05</span> ECW/TBW Ratio <span class="sec-badge watch">Borderline</span></div>
+<div class="card">
+  <div class="two-col">
+    <div>
+      <h3>What This Ratio Measures</h3>
+      <p class="mt-8">ECW/TBW is the ratio of <strong>Extracellular Water</strong> (water outside cells) to <strong>Total Body Water</strong> (all fluids). It's a sensitive marker of <strong>fluid balance, inflammation, and cellular health</strong>.</p>
+      <div class="info-box mt-12">
+        <h4>The Biology</h4>
+        <p>Healthy cells hold more water <em>inside</em> (ICW). When cells are inflamed, stressed, or when edema (swelling) occurs, water shifts <em>outside</em> the cells — raising the ECW/TBW ratio. A rising ratio can indicate:</p>
+        <ul style="margin-top:8px; padding-left:16px; font-size:13px; line-height:1.8;">
+          <li>Chronic inflammation</li>
+          <li>Overtraining or injury</li>
+          <li>Poor nutrition or high sodium intake</li>
+          <li>Certain medical conditions (heart, kidney, liver)</li>
+          <li>Pre-menstrual fluid retention</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <h3>Jane's Result: 0.376</h3>
+      <!-- Visual gauge for ECW/TBW -->
+      <div style="margin: 16px 0;">
+        <div style="position: relative; height: 40px; background: linear-gradient(to right, #22c55e 0%, #22c55e 60%, #f59e0b 60%, #f59e0b 85%, #ef4444 85%, #ef4444 100%); border-radius: 20px; overflow: hidden;">
+          <!-- Pointer -->
+          <div style="position:absolute; left: 75%; top: -4px; width: 4px; height: 48px; background: var(--text); border-radius: 2px; opacity: 0.8;"></div>
+        </div>
+        <div style="display:flex; justify-content:space-between; font-family:var(--font-mono); font-size:9px; color:var(--text-dim); margin-top:4px;">
+          <span>0.360</span>
+          <span style="color:var(--green)">Normal (≤0.380)</span>
+          <span style="color:var(--yellow)">Borderline</span>
+          <span style="color:var(--red-s)">High (≥0.400)</span>
+          <span>0.420</span>
+        </div>
+        <div style="text-align:center; margin-top:10px;">
+          <span style="font-family:var(--font-mono); font-size:1.8rem; font-weight:800; color:var(--yellow);">0.376</span>
+          <br><span class="small">ECW/TBW — within normal range, but worth monitoring</span>
+        </div>
+      </div>
+      <div class="range-box mt-12">
+        <div class="range-dot" style="background:var(--green-bar)"></div>
+        <span><strong>Normal:</strong> 0.360–0.380 (Jane is in this zone)</span>
+      </div>
+      <div class="range-box">
+        <div class="range-dot" style="background:var(--yellow-bar)"></div>
+        <span><strong>Borderline:</strong> 0.381–0.400 — recheck and investigate</span>
+      </div>
+      <div class="range-box">
+        <div class="range-dot" style="background:var(--red-bar)"></div>
+        <span><strong>Elevated:</strong> &gt;0.400 — refer to physician</span>
+      </div>
+    </div>
+  </div>
+  <div class="trainer-script">
+    <div class="ts-label">Trainer's Script</div>
+    <p>"This number measures your fluid balance — basically, how well your body is distributing water between your cells and the spaces around them. Healthy, well-hydrated cells hold more water inside them. Your score is 0.376, which is in the normal range, but it's toward the higher end. This can sometimes happen if you're a little inflamed, if sodium intake was high before the test, or just due to normal hormonal fluctuations. It's not alarming, but it's a good one to keep an eye on — if it keeps creeping up over future scans, we'd want to look at things like hydration, sleep, and recovery."</p>
+  </div>
+</div>
+
+<!-- ═══════════════════ SECTION 6 — HISTORY ═══════════════════ -->
+<div id="s6" class="sec-head"><span class="sec-num">06</span> Body Composition History <span class="sec-badge watch">Tracking Trends</span></div>
+<div class="card">
+  <div class="two-col">
+    <div>
+      <h3>Why Trends Matter More Than Snapshots</h3>
+      <p class="mt-8">A single InBody result is a <strong>snapshot</strong>. The history section is where the real coaching power lies — it shows you whether your client is moving in the right direction over time. Watch for:</p>
+      <ul style="margin-top:10px; padding-left:16px; font-size:13px; line-height:1.9;">
+        <li><strong>SMM trending up</strong> + <strong>PBF trending down</strong> = ideal recomposition</li>
+        <li><strong>Weight dropping + SMM dropping</strong> = losing muscle (bad)</li>
+        <li><strong>ECW/TBW creeping up</strong> = worsening inflammation</li>
+        <li><strong>Weight stable but SMM up</strong> = perfect recomp</li>
+      </ul>
+      <div class="info-box mt-12">
+        <h4>For This Client</h4>
+        <p>Weight has been very stable (134–137 lbs range). SMM fluctuates around 47 lbs with no clear upward trend. PBF has been above 33% throughout. This tells us the current approach hasn't produced significant recomposition — a program change may be warranted.</p>
+      </div>
+    </div>
+    <div>
+      <table class="data-table">
+        <thead>
+          <tr><th>Test</th><th>Weight</th><th>SMM</th><th>PBF</th><th>ECW/TBW</th></tr>
+        </thead>
+        <tbody>
+          <tr class="current-row">
+            <td><span class="mono" style="font-size:11px">Current</span></td>
+            <td class="td-mono">135.4</td>
+            <td class="td-mono">47.6</td>
+            <td class="td-mono" style="color:var(--red-s)">35.0%</td>
+            <td class="td-mono">0.376</td>
+          </tr>
+          <tr>
+            <td class="small">Test –1</td>
+            <td class="td-mono">135.3</td>
+            <td class="td-mono">47.9</td>
+            <td class="td-mono">33.9%</td>
+            <td class="td-mono">0.376</td>
+          </tr>
+          <tr>
+            <td class="small">Test –2</td>
+            <td class="td-mono">135.0</td>
+            <td class="td-mono">46.5</td>
+            <td class="td-mono">34.2%</td>
+            <td class="td-mono">0.376</td>
+          </tr>
+          <tr>
+            <td class="small">Test –3</td>
+            <td class="td-mono">135.1</td>
+            <td class="td-mono">48.2</td>
+            <td class="td-mono">34.3%</td>
+            <td class="td-mono">0.378</td>
+          </tr>
+          <tr>
+            <td class="small">Test –4</td>
+            <td class="td-mono">136.7</td>
+            <td class="td-mono">47.8</td>
+            <td class="td-mono">35.0%</td>
+            <td class="td-mono">0.378</td>
+          </tr>
+          <tr>
+            <td class="small">Test –5</td>
+            <td class="td-mono">134.1</td>
+            <td class="td-mono">46.7</td>
+            <td class="td-mono">32.5%</td>
+            <td class="td-mono">0.376</td>
+          </tr>
+          <tr>
+            <td class="small">Test –6</td>
+            <td class="td-mono">134.1</td>
+            <td class="td-mono">47.1</td>
+            <td class="td-mono">36.2%</td>
+            <td class="td-mono">0.374</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="chart-wrap mt-16">
+    <canvas id="historyChart" height="100"></canvas>
+  </div>
+  <div class="trainer-script">
+    <div class="ts-label">Trainer's Script</div>
+    <p>"This is my favorite part to show clients over time — it tells the real story. Right now we can see your weight has been pretty stable, hovering around 135 pounds. Your muscle mass has been going up and down a bit but hasn't made a big move in either direction. That tells me we haven't quite cracked the code on your programming yet, and that's okay — that's why we have these tests. Each time we scan, we can adjust the plan. Our goal over the next 3 months is to see that muscle line creeping up and that body fat percentage line coming down."</p>
+  </div>
+</div>
+
+<!-- ═══════════════════ SECTION 7 — CONTROL TARGETS ═══════════════════ -->
+<div id="s7" class="sec-head"><span class="sec-num">07</span> Body Fat – Lean Body Mass Control <span class="sec-badge alert">Targets Set</span></div>
+<div class="card">
+  <div class="two-col">
+    <div>
+      <h3>What These Numbers Mean</h3>
+      <p class="mt-8">This panel shows the <strong>recommended changes</strong> to reach the InBody's ideal body composition for this client's height and gender. These are goals to aim for — not an overnight target.</p>
+      <div class="control-row mt-16">
+        <div class="control-arrow" style="color:var(--red-s)">↓</div>
+        <div class="control-label">
+          <strong>Body Fat Mass</strong><br>
+          <span class="small">Lose this much fat to reach ideal</span>
+        </div>
+        <div class="control-val" style="color:var(--red-s)">−18.3 lbs</div>
+      </div>
+      <div class="control-row">
+        <div class="control-arrow" style="color:var(--green)">↑</div>
+        <div class="control-label">
+          <strong>Lean Body Mass</strong><br>
+          <span class="small">Gain this much lean mass to reach ideal</span>
+        </div>
+        <div class="control-val" style="color:var(--green)">+9.3 lbs</div>
+      </div>
+    </div>
+    <div>
+      <h3>Putting It In Context</h3>
+      <div class="info-box mt-8">
+        <h4>Current → Ideal Comparison</h4>
+        <table class="data-table" style="margin-top:4px;">
+          <thead><tr><th>Metric</th><th>Current</th><th>Ideal Target</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>Body Fat</td>
+              <td class="td-mono" style="color:var(--red-s)">47.4 lbs</td>
+              <td class="td-mono" style="color:var(--green)">~29.1 lbs</td>
+            </tr>
+            <tr>
+              <td>Lean Mass</td>
+              <td class="td-mono" style="color:var(--yellow)">88.0 lbs</td>
+              <td class="td-mono" style="color:var(--green)">~97.3 lbs</td>
+            </tr>
+            <tr>
+              <td>Body Fat %</td>
+              <td class="td-mono" style="color:var(--red-s)">35.0%</td>
+              <td class="td-mono" style="color:var(--green)">~23%</td>
+            </tr>
+            <tr>
+              <td>Weight</td>
+              <td class="td-mono">135.4 lbs</td>
+              <td class="td-mono">~126.4 lbs</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="info-box mt-12">
+        <h4>Realistic Timelines</h4>
+        <p>Losing 18 lbs of fat while gaining 9 lbs of muscle is a 12–18 month journey with consistent training and nutrition. A rate of 0.5–1 lb fat loss per week while on a muscle-building program is realistic and sustainable.</p>
+      </div>
+    </div>
+  </div>
+  <div class="trainer-script">
+    <div class="ts-label">Trainer's Script</div>
+    <p>"These two numbers are your roadmap. The InBody is saying that to reach your ideal composition for your height and gender, we want to lose about 18 pounds of pure fat while also adding about 9 pounds of muscle. Notice that the scale would only drop by about 9 pounds total — because while we're losing 18 pounds of fat, we're adding 9 pounds of muscle. If you only looked at the scale, you might feel like you're not making progress when actually you're doing great. That's why we scan — so we can see both sides of the equation."</p>
+  </div>
+</div>
+
+<!-- ═══════════════════ SECTION 8 — SEGMENTAL FAT ═══════════════════ -->
+<div id="s8" class="sec-head"><span class="sec-num">08</span> Segmental Fat Analysis <span class="sec-badge alert">Trunk Critical</span></div>
+<div class="card">
+  <div class="two-col">
+    <div>
+      <h3>What This Measures</h3>
+      <p class="mt-8">This shows <strong>how fat is distributed across each body segment relative to the ideal</strong>. 100% = exactly at the ideal level for that segment. Values above 100% indicate fat above the healthy target for that area. This section focuses on fat distribution — the companion to segmental lean, which covers muscle.</p>
+      <div class="info-box mt-12">
+        <h4>Why Fat Location Matters</h4>
+        <p>Trunk fat carries the greatest metabolic impact — it correlates with elevated cardiovascular risk, insulin resistance, and inflammation. This makes it the highest-priority area to address through both nutrition and aerobic conditioning. Limb fat has a lower metabolic impact, though reducing it contributes to overall body composition goals.</p>
+      </div>
+    </div>
+    <div>
+      <!-- SVG for fat distribution -->
+      <svg viewBox="0 0 130 310" width="130" style="display:block;margin:0 auto;" xmlns="http://www.w3.org/2000/svg">
+        <!-- Head -->
+        <circle cx="65" cy="28" r="22" fill="#e2dfd9" stroke="var(--border)" stroke-width="1.5"/>
+        <!-- Neck -->
+        <rect x="58" y="48" width="14" height="14" rx="3" fill="#e2dfd9"/>
+        <!-- Trunk — 202.2% CRITICAL -->
+        <rect x="26" y="62" width="78" height="88" rx="10" fill="rgba(239,68,68,0.30)" stroke="#ef4444" stroke-width="2.5"/>
+        <text x="65" y="103" text-anchor="middle" font-family="'Azeret Mono',monospace" font-size="11" font-weight="700" fill="#991b1b">202%</text>
+        <text x="65" y="117" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-size="9" fill="#7a756d">Trunk</text>
+        <!-- Right Arm (screen-left) 100% -->
+        <rect x="3" y="62" width="20" height="78" rx="9" fill="rgba(34,197,94,0.22)" stroke="#22c55e" stroke-width="1.8"/>
+        <text x="13" y="100" text-anchor="middle" transform="rotate(-90,13,100)" font-family="'Azeret Mono',monospace" font-size="8" font-weight="700" fill="#166534">100%</text>
+        <!-- Left Arm (screen-right) 158.9% -->
+        <rect x="107" y="62" width="20" height="78" rx="9" fill="rgba(239,68,68,0.22)" stroke="#ef4444" stroke-width="1.8"/>
+        <text x="117" y="100" text-anchor="middle" transform="rotate(90,117,100)" font-family="'Azeret Mono',monospace" font-size="8" font-weight="700" fill="#991b1b">159%</text>
+        <!-- Right Leg 132.4% -->
+        <rect x="30" y="153" width="28" height="120" rx="10" fill="rgba(245,158,11,0.25)" stroke="#f59e0b" stroke-width="1.8"/>
+        <text x="44" y="214" text-anchor="middle" font-family="'Azeret Mono',monospace" font-size="8" font-weight="700" fill="#92400e">132%</text>
+        <!-- Left Leg 132.4% -->
+        <rect x="72" y="153" width="28" height="120" rx="10" fill="rgba(245,158,11,0.25)" stroke="#f59e0b" stroke-width="1.8"/>
+        <text x="86" y="214" text-anchor="middle" font-family="'Azeret Mono',monospace" font-size="8" font-weight="700" fill="#92400e">132%</text>
+        <!-- Labels -->
+        <text x="13" y="148" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-size="8" fill="#7a756d">R Arm</text>
+        <text x="117" y="148" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-size="8" fill="#7a756d">L Arm</text>
+        <text x="44" y="281" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-size="8" fill="#7a756d">R Leg</text>
+        <text x="86" y="281" text-anchor="middle" font-family="'Plus Jakarta Sans',sans-serif" font-size="8" fill="#7a756d">L Leg</text>
+      </svg>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+  <table class="data-table">
+    <thead>
+      <tr><th>Segment</th><th>Fat %</th><th>Status</th><th>Interpretation</th><th style="width:35%">Visual</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Right Arm</strong></td>
+        <td class="td-mono" style="color:var(--green)">100.0%</td>
+        <td><span class="td-status good">Ideal</span></td>
+        <td class="small">Exactly at ideal fat level for this arm</td>
+        <td>
+          <div class="seg-track" style="height:12px;">
+            <div class="seg-fill" style="width:50%; background:var(--green-bar); height:100%; border-radius:5px;"></div>
+            <div class="seg-ideal-mark" style="left:50%"></div>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Left Arm</strong></td>
+        <td class="td-mono" style="color:var(--red-s)">158.9%</td>
+        <td><span class="td-status alert">High</span></td>
+        <td class="small">Left arm carrying ~59% more fat than ideal</td>
+        <td>
+          <div class="seg-track" style="height:12px; overflow:hidden;">
+            <div class="seg-fill" style="width:79%; background:var(--red-bar); height:100%; border-radius:5px;"></div>
+            <div class="seg-ideal-mark" style="left:50%"></div>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Trunk</strong></td>
+        <td class="td-mono" style="color:var(--red-s)">202.2%</td>
+        <td><span class="td-status alert">Critical</span></td>
+        <td class="small">Carrying <em>double</em> the ideal trunk fat — highest priority</td>
+        <td>
+          <div class="seg-track" style="height:12px; overflow:hidden;">
+            <div class="seg-fill" style="width:100%; background:var(--red-bar); height:100%; border-radius:5px;"></div>
+            <div class="seg-ideal-mark" style="left:33%"></div>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Right Leg</strong></td>
+        <td class="td-mono" style="color:var(--yellow)">132.4%</td>
+        <td><span class="td-status watch">Elevated</span></td>
+        <td class="small">32% above ideal — secondary priority</td>
+        <td>
+          <div class="seg-track" style="height:12px; overflow:hidden;">
+            <div class="seg-fill" style="width:66%; background:var(--yellow-bar); height:100%; border-radius:5px;"></div>
+            <div class="seg-ideal-mark" style="left:50%"></div>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td><strong>Left Leg</strong></td>
+        <td class="td-mono" style="color:var(--yellow)">132.4%</td>
+        <td><span class="td-status watch">Elevated</span></td>
+        <td class="small">32% above ideal — secondary priority</td>
+        <td>
+          <div class="seg-track" style="height:12px; overflow:hidden;">
+            <div class="seg-fill" style="width:66%; background:var(--yellow-bar); height:100%; border-radius:5px;"></div>
+            <div class="seg-ideal-mark" style="left:50%"></div>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="trainer-script">
+    <div class="ts-label">Trainer's Script</div>
+    <p>"This section shows us <em>where</em> your body tends to store fat — and what stands out is your trunk score of 202%. That means your midsection is holding about double the fat compared to the ideal for your size. This is the area we'll focus on most — not just for how you feel in your clothes, but because trunk fat has the biggest impact on things like heart health and blood sugar. Your legs are at 132% — above ideal but much more manageable. Your right arm is at 100%, which is exactly where we want it — that's a real positive. The combination of cardio, nutrition, and strength training will all work together to shift these numbers over time."</p>
+  </div>
+</div>
+
+<!-- ═══════════════════ SECTION 9 — BMR ═══════════════════ -->
+<div id="s9" class="sec-head"><span class="sec-num">09</span> Basal Metabolic Rate <span class="sec-badge good">Normal</span></div>
+<div class="card">
+  <div class="two-col">
+    <div>
+      <h3>What Is BMR?</h3>
+      <p class="mt-8">Basal Metabolic Rate is the number of calories your body burns <strong>at complete rest</strong> — just to keep organs functioning, maintain body temperature, and keep you alive. It does NOT include any activity.</p>
+      <div style="margin-top:16px; text-align:center; padding: 20px; background: var(--surface2); border-radius: 12px;">
+        <div style="font-family:var(--font-mono); font-size: 3rem; font-weight: 800; color: var(--green); line-height:1;">1,231</div>
+        <div style="font-family:var(--font-mono); font-size:12px; color:var(--text-dim); margin-top:4px;">kcal / day at rest</div>
+      </div>
+      <div class="info-box mt-12">
+        <h4>How InBody Calculates BMR</h4>
+        <p>InBody uses lean body mass (not total weight) to calculate BMR — which is more accurate than height/weight formulas. <strong>Muscle is metabolically active</strong>: every pound of muscle you gain adds roughly 6–10 kcal/day to your BMR. Building 9 lbs of muscle would increase her BMR by ~60–90 kcal/day.</p>
+      </div>
+    </div>
+    <div>
+      <h3>Using BMR for Nutrition Planning</h3>
+      <div class="info-box mt-8">
+        <h4>Total Daily Energy Expenditure (TDEE)</h4>
+        <p>BMR × Activity Factor = estimated total daily calories burned:</p>
+        <table class="data-table" style="margin-top:8px;">
+          <thead><tr><th>Activity Level</th><th>Factor</th><th>Est. TDEE</th></tr></thead>
+          <tbody>
+            <tr><td>Sedentary (desk job)</td><td class="td-mono">×1.2</td><td class="td-mono">1,477 kcal</td></tr>
+            <tr style="background:var(--accent-light);"><td><strong>Lightly Active (1–3x/wk)</strong></td><td class="td-mono"><strong>×1.375</strong></td><td class="td-mono"><strong>1,693 kcal</strong></td></tr>
+            <tr><td>Moderately Active (3–5x/wk)</td><td class="td-mono">×1.55</td><td class="td-mono">1,908 kcal</td></tr>
+            <tr><td>Very Active (6–7x/wk)</td><td class="td-mono">×1.725</td><td class="td-mono">2,123 kcal</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="info-box mt-12">
+        <h4>Practical Coaching Application</h4>
+        <p>For fat loss + muscle gain (recomposition), target <strong>TDEE minus 200–300 kcal</strong> with <strong>high protein (0.7–1g per lb of goal body weight)</strong>. A 300 kcal deficit × 7 days = 2,100 kcal deficit per week ≈ 0.6 lbs fat loss per week.</p>
+      </div>
+    </div>
+  </div>
+  <div class="trainer-script">
+    <div class="ts-label">Trainer's Script</div>
+    <p>"Your basal metabolic rate — that's your body's engine speed at idle — is 1,231 calories a day. That's actually really useful for us because it's calculated from your lean mass, not just your height and weight, so it's more accurate than those online calculators. If you're lightly active, you're burning around 1,700 calories a day total. If we aim to eat around 1,400–1,500 calories — especially with high protein — you'd be in a gentle deficit that should drop about half a pound of fat per week without sacrificing muscle. And as we build more muscle, that number will go up on its own."</p>
+  </div>
+</div>
+
+<!-- ═══════════════════ SECTION 10 — VISCERAL FAT ═══════════════════ -->
+<div id="s10" class="sec-head"><span class="sec-num">10</span> Visceral Fat Level <span class="sec-badge alert">High — Priority</span></div>
+<div class="card">
+  <div class="two-col">
+    <div>
+      <h3>What Is Visceral Fat?</h3>
+      <p class="mt-8">Visceral fat is fat stored <strong>deep inside the abdomen</strong>, surrounding internal organs like the liver, pancreas, and intestines. Unlike subcutaneous fat (under the skin), it's not visible or pinchable — but it has a much greater impact on metabolic health than surface-level fat.</p>
+      <div class="info-box mt-12" style="background:var(--red-bg); border: 1px solid rgba(153,27,27,0.2);">
+        <h4>Why Visceral Fat Is Dangerous</h4>
+        <p>High visceral fat is directly linked to:</p>
+        <ul style="margin-top:6px; padding-left:16px; font-size:13px; line-height:1.9;">
+          <li>Type 2 diabetes and insulin resistance</li>
+          <li>Cardiovascular disease and high blood pressure</li>
+          <li>Chronic systemic inflammation</li>
+          <li>Non-alcoholic fatty liver disease</li>
+          <li>Certain cancers</li>
+        </ul>
+      </div>
+    </div>
+    <div>
+      <h3>Jane's Level: 11</h3>
+      <!-- Visceral fat gauge -->
+      <div style="margin-top:16px;">
+        <div style="position:relative; height:50px; display:flex; border-radius:25px; overflow:hidden;">
+          <div style="flex:10; background: linear-gradient(to right, #22c55e, #4ade80); display:flex; align-items:center; justify-content:center; font-family:var(--font-mono); font-size:10px; font-weight:700; color:rgba(0,0,0,0.7);">1–9<br><span style="font-size:8px">Low</span></div>
+          <div style="flex:5; background: linear-gradient(to right, #f59e0b, #ef4444); display:flex; align-items:center; justify-content:center; font-family:var(--font-mono); font-size:10px; font-weight:700; color:white;">10–14<br><span style="font-size:8px">High</span></div>
+          <div style="flex:6; background: #991b1b; display:flex; align-items:center; justify-content:center; font-family:var(--font-mono); font-size:10px; font-weight:700; color:white;">15–20<br><span style="font-size:8px">Very High</span></div>
+        </div>
+        <!-- Pointer -->
+        <div style="position:relative; height:20px; margin-top:4px;">
+          <div style="position:absolute; left: calc(10/21 * 100%); transform:translateX(-50%); font-family:var(--font-mono); font-size:9px; color:var(--red-s);">▲ Level 11</div>
+        </div>
+        <div style="text-align:center; margin-top:12px;">
+          <span style="font-family:var(--font-mono); font-size:2.5rem; font-weight:800; color:var(--red-s);">11</span>
+          <br><span class="small">Just above the healthy threshold of 10</span>
+        </div>
+      </div>
+      <div class="range-box mt-12">
+        <div class="range-dot" style="background:var(--green-bar)"></div>
+        <span><strong>Low (1–9):</strong> Healthy metabolic risk</span>
+      </div>
+      <div class="range-box" style="background:var(--red-bg);">
+        <div class="range-dot" style="background:var(--red-bar)"></div>
+        <span><strong>High (10+):</strong> Jane is at Level 11 — action needed</span>
+      </div>
+    </div>
+  </div>
+  <div class="info-box mt-16">
+    <h4>How to Reduce Visceral Fat — Coaching Priorities</h4>
+    <div class="three-col" style="margin-top:10px; gap:16px;">
+      <div>
+        <strong>Cardio Training</strong>
+        <p class="small mt-4">Moderate-intensity cardio (30–45 min, 3–5x/week) is the most effective training stimulus for reducing visceral fat. Zone 2 (conversational pace) is ideal for sustained fat oxidation.</p>
+      </div>
+      <div>
+        <strong>Nutrition</strong>
+        <p class="small mt-4">Reduce processed carbohydrates and added sugars. These cause insulin spikes that directly promote visceral fat storage. Prioritize fiber, protein, and healthy fats.</p>
+      </div>
+      <div>
+        <strong>Sleep & Stress</strong>
+        <p class="small mt-4">Poor sleep and chronic stress elevate cortisol, which directly drives visceral fat accumulation. 7–9 hours of sleep is non-negotiable for fat loss clients.</p>
+      </div>
+    </div>
+  </div>
+  <div class="trainer-script">
+    <div class="ts-label">Trainer's Script</div>
+    <p>"I want to spend a moment on this one because it's important. Your visceral fat level is 11. The healthy range is under 10, so you're just above the threshold. Visceral fat is the fat that wraps around your internal organs — you can't see it or feel it from the outside, but it's the type that's most linked to things like blood sugar problems and heart health. The good news is visceral fat actually responds really well to exercise and nutrition changes — it's often the first fat to come off when you clean up your diet and start moving consistently. This is a big motivator for us to get your cardio in 3–4 times a week."</p>
+  </div>
+</div>
+
+<!-- ═══════════════════ SECTION 11 — IMPEDANCE ═══════════════════ -->
+<div id="s11" class="sec-head"><span class="sec-num">11</span> Impedance Values <span class="sec-badge good">Raw Data</span></div>
+<div class="card">
+  <div class="two-col">
+    <div>
+      <h3>How InBody Measures You</h3>
+      <p class="mt-8">The InBody570 uses <strong>Bioelectrical Impedance Analysis (BIA)</strong> — it sends a safe, low-level electrical current through the body and measures the resistance (impedance) it encounters. Different tissues resist electricity differently:</p>
+      <div class="info-box mt-12">
+        <h4>Why Two Frequencies?</h4>
+        <ul style="padding-left:16px; font-size:13px; line-height:1.9; margin-top:4px;">
+          <li><strong>5 kHz (low freq):</strong> Current travels <em>outside</em> cells — measures extracellular fluid and fat (poor conductors)</li>
+          <li><strong>500 kHz (high freq):</strong> Current penetrates <em>cell membranes</em> — measures total body water including intracellular fluid</li>
+        </ul>
+        <p class="mt-8">By comparing the two frequencies, InBody can calculate how much water is inside vs. outside cells — giving you the ICW/ECW breakdown.</p>
+      </div>
+      <div class="info-box mt-12">
+        <h4>Why the Trunk Impedance Is So Low</h4>
+        <p>The trunk shows values around 21–30 Ω — far lower than the arms (400–500 Ω) or legs (300–600 Ω). This is because the trunk is a large, fluid-filled cavity with a short path length. High fluid = low resistance.</p>
+      </div>
+    </div>
+    <div>
+      <h3>Jane's Impedance Values (Ω)</h3>
+      <div class="imp-grid" style="margin-top:14px;">
+        <div class="imp-cell header"></div>
+        <div class="imp-cell header"><div class="imp-seg">R Arm</div></div>
+        <div class="imp-cell header"><div class="imp-seg">L Arm</div></div>
+        <div class="imp-cell header"><div class="imp-seg">Trunk</div></div>
+        <div class="imp-cell header"><div class="imp-seg">R Leg</div></div>
+        <div class="imp-cell header"><div class="imp-seg">L Leg</div></div>
+
+        <div class="imp-cell header"><div class="imp-freq">5 kHz</div></div>
+        <div class="imp-cell"><div class="imp-val">505</div><div class="imp-unit">Ω</div></div>
+        <div class="imp-cell"><div class="imp-val">522</div><div class="imp-unit">Ω</div></div>
+        <div class="imp-cell"><div class="imp-val">30</div><div class="imp-unit">Ω</div></div>
+        <div class="imp-cell"><div class="imp-val">597</div><div class="imp-unit">Ω</div></div>
+        <div class="imp-cell"><div class="imp-val">387</div><div class="imp-unit">Ω</div></div>
+
+        <div class="imp-cell header"><div class="imp-freq">500 kHz</div></div>
+        <div class="imp-cell"><div class="imp-val">397</div><div class="imp-unit">Ω</div></div>
+        <div class="imp-cell"><div class="imp-val">415</div><div class="imp-unit">Ω</div></div>
+        <div class="imp-cell"><div class="imp-val">21</div><div class="imp-unit">Ω</div></div>
+        <div class="imp-cell"><div class="imp-val">565</div><div class="imp-unit">Ω</div></div>
+        <div class="imp-cell"><div class="imp-val">300</div><div class="imp-unit">Ω</div></div>
+      </div>
+      <div class="info-box mt-12">
+        <h4>What Affects Impedance Readings</h4>
+        <p>Testing conditions that can skew results:</p>
+        <ul style="padding-left:16px; font-size:12px; line-height:1.9; margin-top:4px;">
+          <li>Eating or drinking within 2 hours before test</li>
+          <li>Exercise within 12 hours before test</li>
+          <li>Menstrual cycle phase (fluid retention)</li>
+          <li>Dehydration or alcohol consumption</li>
+          <li>Lotion, socks, or bare metal jewelry on test points</li>
+        </ul>
+        <p class="mt-8">Always test clients under the same conditions for comparable results.</p>
+      </div>
+    </div>
+  </div>
+  <div class="trainer-script">
+    <div class="ts-label">Trainer's Script</div>
+    <p>"These numbers are the raw electrical readings that the machine uses to calculate everything else. When you stand on the InBody and grip the handles, it's sending a tiny electrical current — completely safe, you won't feel anything — through your body. Muscle and water conduct electricity well, fat doesn't. So by measuring how much resistance your body has in each segment, it can tell how much muscle vs. fat is in each area. This is why you need to test under consistent conditions — same time of day, same hydration level, no eating beforehand — so we're comparing apples to apples each time."</p>
+  </div>
+</div>
+
+<!-- ═══════════════════ SECTION 12 — INTERPRETATION ═══════════════════ -->
+<div id="s12" class="sec-head"><span class="sec-num">12</span> Results Interpretation Guide <span class="sec-badge good">Reference</span></div>
+<div class="card">
+  <div class="two-col">
+    <div>
+      <div class="info-box">
+        <h4>Body Fat Analysis Interpretation</h4>
+        <p>BMI uses height and weight to flag potential weight-related health risk — but it can't distinguish muscle from fat. A muscular athlete can have a high BMI while having low body fat. <strong>Always use PBF alongside BMI</strong> for a complete picture. InBody's PBF directly measures body fat percentage via impedance, making it significantly more useful than BMI alone for fitness clients.</p>
+      </div>
+      <div class="info-box mt-12">
+        <h4>Segmental Lean Analysis Interpretation</h4>
+        <p>The top bar in each segment shows how much lean mass the client <em>actually has</em>. The bottom bar shows the <em>ideal amount</em>. When the top bar is shorter than the bottom bar, the muscle is underdeveloped relative to the client's size. When muscles are adequately developed (top bar meets or exceeds bottom bar), the segment is said to be "in balance."</p>
+      </div>
+    </div>
+    <div>
+      <div class="info-box">
+        <h4>Body Water Analysis Interpretation</h4>
+        <p>ECW/TBW is the ratio of Extracellular Water to Total Body Water. It's an important indicator of whether the body's water distribution is balanced. A healthy ratio is approximately 0.360–0.380. Values above 0.380 may indicate inflammation, injury, or edema. Values persistently above 0.400 should prompt a referral to a physician to rule out systemic causes.</p>
+      </div>
+      <div class="info-box mt-12">
+        <h4>Visceral Fat Level Interpretation</h4>
+        <p>Visceral Fat Level (VFL) is an estimated indicator based on the amount of fat surrounding internal organs in the abdomen. A VFL under 10 is associated with healthy metabolic function. A VFL of 10 or above suggests elevated visceral fat — the type most associated with metabolic syndrome. Diet, cardiovascular exercise, sleep, and stress management are all effective ways to bring this number down.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Quick Reference Cheat Sheet -->
+  <h3>Quick Reference: Status Indicators</h3>
+  <table class="data-table mt-12">
+    <thead>
+      <tr><th>Metric</th><th>Jane's Value</th><th>Healthy Range</th><th>Status</th><th>Action</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Weight</td><td class="td-mono">135.4 lbs</td><td class="td-mono">~117–128 lbs ideal</td>
+        <td><span class="td-status watch">Watch</span></td>
+        <td class="small">Focus on body composition, not just weight</td>
+      </tr>
+      <tr>
+        <td>BMI</td><td class="td-mono">22.5</td><td class="td-mono">18.5–24.9</td>
+        <td><span class="td-status good">Good</span></td>
+        <td class="small">Normal — but PBF is more important here</td>
+      </tr>
+      <tr>
+        <td>PBF</td><td class="td-mono">35.0%</td><td class="td-mono">20–30% (female)</td>
+        <td><span class="td-status alert">High</span></td>
+        <td class="small">Primary target — reduce via deficit + cardio</td>
+      </tr>
+      <tr>
+        <td>SMM</td><td class="td-mono">47.6 lbs</td><td class="td-mono">~56.9 lbs ideal</td>
+        <td><span class="td-status watch">Low</span></td>
+        <td class="small">Progressive resistance training 3–4x/week</td>
+      </tr>
+      <tr>
+        <td>Segmental Lean (all)</td><td class="td-mono">85–96%</td><td class="td-mono">100%+</td>
+        <td><span class="td-status watch">Below Ideal</span></td>
+        <td class="small">Upper body priority; full-body strength program</td>
+      </tr>
+      <tr>
+        <td>ECW/TBW</td><td class="td-mono">0.376</td><td class="td-mono">0.360–0.380</td>
+        <td><span class="td-status watch">Borderline</span></td>
+        <td class="small">Monitor hydration, sleep, inflammation markers</td>
+      </tr>
+      <tr>
+        <td>Visceral Fat</td><td class="td-mono">Level 11</td><td class="td-mono">Level 1–9</td>
+        <td><span class="td-status alert">High</span></td>
+        <td class="small">Cardio 3–5x/week, reduce processed carbs</td>
+      </tr>
+      <tr>
+        <td>Trunk Fat</td><td class="td-mono">202.2%</td><td class="td-mono">100%</td>
+        <td><span class="td-status alert">Critical</span></td>
+        <td class="small">Diet + cardio primary focus for this client</td>
+      </tr>
+      <tr>
+        <td>BMR</td><td class="td-mono">1,231 kcal</td><td class="td-mono">1,200–1,400</td>
+        <td><span class="td-status good">Normal</span></td>
+        <td class="small">Use as nutrition baseline; will rise with muscle gain</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="trainer-script" style="margin-top:20px;">
+    <div class="ts-label">Closing Script — Wrapping Up a Session</div>
+    <p>"Overall, here's what I'd take away from this scan. Your weight and BMI look totally normal — if you just stepped on a regular scale, nothing would seem off. But InBody shows us a more complete picture: your body fat is on the higher side at 35%, and it's concentrated mainly in your trunk area. Your muscles across the board are close to but not quite at ideal. And your visceral fat at Level 11 is a flag I want us to address. The great news is: you're not starting from scratch. You have a solid base. With consistent training — especially strength work and cardio — and the right nutrition, you should start seeing meaningful changes on your next scan in 8–12 weeks."</p>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div style="padding: 32px 0; border-top: 1px solid var(--border); margin-top: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: gap;">
+  <div class="small">InBody570 Personal Trainer Guide · Jane Doe · 02/28/2020</div>
+  <div class="small">Generated for professional training use · All values based on InBody570 methodology</div>
+</div>
+
+</div><!-- /main -->
+</div><!-- /wrap -->
+
+<!-- ═══════════════════ CHART.JS ═══════════════════ -->
+<script>
+(function() {
+  const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const textColor = isDark ? '#8a8779' : '#7a756d';
+  const gridColor = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
+
+  const ctx = document.getElementById('historyChart');
+  if (!ctx) return;
+
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: ['Test –6', 'Test –5', 'Test –4', 'Test –3', 'Test –2', 'Test –1', 'Current'],
+      datasets: [
+        {
+          label: 'Weight (lbs)',
+          data: [134.1, 134.1, 136.7, 135.1, 135.0, 135.3, 135.4],
+          borderColor: '#64748b',
+          backgroundColor: 'rgba(100,116,139,0.08)',
+          pointBackgroundColor: '#64748b',
+          borderWidth: 2,
+          pointRadius: 4,
+          tension: 0.35,
+          yAxisID: 'y',
+        },
+        {
+          label: 'SMM (lbs)',
+          data: [47.1, 46.7, 47.8, 48.2, 46.5, 47.9, 47.6],
+          borderColor: '#22c55e',
+          backgroundColor: 'rgba(34,197,94,0.08)',
+          pointBackgroundColor: '#22c55e',
+          borderWidth: 2,
+          pointRadius: 4,
+          tension: 0.35,
+          yAxisID: 'y',
+        },
+        {
+          label: 'Body Fat % (PBF)',
+          data: [36.2, 32.5, 35.0, 34.3, 34.2, 33.9, 35.0],
+          borderColor: '#ef4444',
+          backgroundColor: 'rgba(239,68,68,0.08)',
+          pointBackgroundColor: '#ef4444',
+          borderWidth: 2,
+          pointRadius: 4,
+          tension: 0.35,
+          yAxisID: 'y2',
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: {
+          labels: {
+            color: textColor,
+            font: { family: "'Plus Jakarta Sans', system-ui, sans-serif", size: 12 },
+            boxWidth: 14,
+            padding: 16,
+          }
+        },
+        tooltip: {
+          backgroundColor: isDark ? '#1b1a14' : '#ffffff',
+          titleColor: isDark ? '#e8e6de' : '#1a1714',
+          bodyColor: textColor,
+          borderColor: isDark ? '#333228' : '#ddd9d2',
+          borderWidth: 1,
+        }
+      },
+      scales: {
+        x: {
+          ticks: { color: textColor, font: { family: "'Azeret Mono', monospace", size: 10 } },
+          grid: { color: gridColor },
+        },
+        y: {
+          type: 'linear',
+          display: true,
+          position: 'left',
+          ticks: { color: textColor, font: { family: "'Azeret Mono', monospace", size: 10 } },
+          grid: { color: gridColor },
+          title: { display: true, text: 'lbs', color: textColor, font: { size: 11 } }
+        },
+        y2: {
+          type: 'linear',
+          display: true,
+          position: 'right',
+          ticks: {
+            color: '#ef4444',
+            font: { family: "'Azeret Mono', monospace", size: 10 },
+            callback: v => v + '%'
+          },
+          grid: { drawOnChartArea: false },
+          title: { display: true, text: 'Body Fat %', color: '#ef4444', font: { size: 11 } }
+        }
+      }
+    }
+  });
+})();
+</script>
+
+<!-- ═══════════════════ SCROLL SPY ═══════════════════ -->
+<script>
+(function() {
+  const toc = document.getElementById('toc');
+  if (!toc) return;
+  const links = toc.querySelectorAll('a');
+  const sections = [];
+  links.forEach(link => {
+    const id = link.getAttribute('href').slice(1);
+    const el = document.getElementById(id);
+    if (el) sections.push({ id, el, link });
+  });
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const match = sections.find(s => s.el === entry.target);
+        if (match) {
+          match.link.classList.add('active');
+          if (window.innerWidth <= 1020) {
+            match.link.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+          }
+        }
+      }
+    });
+  }, { rootMargin: '-10% 0px -80% 0px' });
+  sections.forEach(s => observer.observe(s.el));
+  links.forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      const id = link.getAttribute('href').slice(1);
+      const el = document.getElementById(id);
+      if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'start' }); history.replaceState(null, '', '#' + id); }
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

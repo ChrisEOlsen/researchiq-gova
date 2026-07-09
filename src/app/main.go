@@ -76,6 +76,7 @@ func main() {
 		r.Get("/result", handlers.ResultGET())
 		r.Get("/share", handlers.ShareGET())
 		r.Get("/settings", handlers.SettingsGET())
+		r.Get("/inbody570-guide.html", func(w http.ResponseWriter, r *http.Request) { http.ServeFile(w, r, "./static/inbody570-guide.html") })
 
 		// Generated API routes registered here by MCP tools
 		// Use database.Read for GET handlers, database.Write for POST handlers
