@@ -54,7 +54,22 @@ func ResearchSubmitPOST(readDB, writeDB *sql.DB, appCache *cache.Cache) http.Han
 			}
 		} else {
 			guestIDs := getGuestJobIDs(r)
-			if len(guestIDs) >= 5 {
+			// Guest quota is 5 *done* jobs, not 5 attempts — a failed job
+			// (e.g. no relevant studies found) doesn't consume the guest's
+			// free queries. See SEED.md: "Guest credit count = 5 - count(done
+			// jobs in cookie); failed jobs are free."
+			existingJobs, err := jobModel.GetByIDs(guestIDs)
+			if err != nil {
+				jsonError(w, "internal error", 500)
+				return
+			}
+			doneCount := 0
+			for _, j := range existingJobs {
+				if j.Status == "done" {
+					doneCount++
+				}
+			}
+			if doneCount >= 5 {
 				jsonError(w, "guest query limit reached", 402)
 				return
 			}

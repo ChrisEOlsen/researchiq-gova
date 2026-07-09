@@ -91,6 +91,9 @@ func MeGET(readDB, writeDB *sql.DB, appCache *cache.Cache) http.HandlerFunc {
 			jsonError(w, "user not found", http.StatusNotFound)
 			return
 		}
-		jsonOK(w, map[string]any{"id": user.ID, "name": user.Name, "email": user.Email})
+		jsonOK(w, map[string]any{
+			"id": user.ID, "name": user.Name, "email": user.Email,
+			"credits": user.Credits, "lifetime_access": user.LifetimeAccess,
+		})
 	}
 }

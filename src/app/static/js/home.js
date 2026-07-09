@@ -1,7 +1,9 @@
-import { post } from '/static/js/lib/api.js';
+import { get, post } from '/static/js/lib/api.js';
 import { initNav } from '/static/js/lib/nav.js';
 
 const app = document.getElementById('app');
+let creditBanner;
+let submitDisabledByCredits = false;
 
 const EXAMPLE_QUESTIONS = [
   'Is intermittent fasting effective for weight loss?',
@@ -31,6 +33,10 @@ function render() {
 
   const card = document.createElement('div');
   card.className = 'bg-surface border border-border rounded-lg p-6 space-y-4';
+
+  creditBanner = document.createElement('div');
+  creditBanner.className = 'hidden border border-border bg-surface-2 text-text text-sm px-4 py-3 rounded';
+  card.appendChild(creditBanner);
 
   errorMsg = document.createElement('div');
   errorMsg.className = 'hidden border border-red-200 bg-red-50 text-red-700 text-sm px-4 py-3 rounded';
@@ -97,7 +103,45 @@ function setSubmitting(isSubmitting) {
   }
 }
 
+function showCreditBanner(text, linkHref, linkText) {
+  creditBanner.replaceChildren();
+  creditBanner.appendChild(document.createTextNode(text + ' '));
+  const link = document.createElement('a');
+  link.href = linkHref;
+  link.className = 'font-medium text-primary hover:text-primary-hover';
+  link.textContent = linkText;
+  creditBanner.appendChild(link);
+  creditBanner.classList.remove('hidden');
+  submitDisabledByCredits = true;
+  submitBtn.disabled = true;
+}
+
+// Reads the caller's real credit/guest state and shows an accurate banner
+// up front, rather than only surfacing a rejection after they submit —
+// GOTHA had a bug here where the home page showed a hardcoded "5 credits"
+// regardless of actual usage (SEED.md, Guest Mode section).
+async function loadCreditState() {
+  const me = await get('/api/auth/me');
+  if (me.ok) {
+    if (!me.data.lifetime_access && me.data.credits <= 0) {
+      showCreditBanner("You're out of credits.", '/settings', 'Buy more credits →');
+    }
+    return;
+  }
+
+  const hist = await get('/api/research_history');
+  if (!hist.ok) return;
+  const doneCount = (hist.data?.jobs ?? []).filter((j) => j.status === 'done').length;
+  if (doneCount >= 5) {
+    showCreditBanner("You've used all 5 free guest questions.", '/register', 'Register for more →');
+  }
+}
+
 async function onSubmit(e) {
+  if (submitDisabledByCredits) {
+    e.preventDefault();
+    return;
+  }
   e.preventDefault();
   errorMsg.classList.add('hidden');
 
@@ -123,3 +167,4 @@ async function onSubmit(e) {
 
 initNav();
 render();
+loadCreditState();
