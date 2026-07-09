@@ -3,19 +3,19 @@ package models
 import (
 	"database/sql"
 	"encoding/json"
-	"time"
 	"gova/app/cache"
+	"time"
 )
 
 type CreditTransaction struct {
-	ID                   int64     `json:"id"`
-	UserID               int64     `json:"user_id"`
-	Type                 string    `json:"type"`
-	Amount               int64     `json:"amount"`
-	Description          string    `json:"description"`
-	StripePaymentIntentID string   `json:"stripe_payment_intent_id"`
-	JobID                int64     `json:"job_id"`
-	CreatedAt            time.Time `json:"created_at"`
+	ID                    int64     `json:"id"`
+	UserID                int64     `json:"user_id"`
+	Type                  string    `json:"type"`
+	Amount                int64     `json:"amount"`
+	Description           string    `json:"description"`
+	StripePaymentIntentID string    `json:"stripe_payment_intent_id"`
+	JobID                 int64     `json:"job_id"`
+	CreatedAt             time.Time `json:"created_at"`
 }
 
 type CreditTransactionModel struct {
