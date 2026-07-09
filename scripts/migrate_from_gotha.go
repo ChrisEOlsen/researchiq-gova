@@ -2,19 +2,24 @@ package main
 
 import (
 	"database/sql"
+	"flag"
 	"log"
 
 	_ "github.com/mattn/go-sqlite3"
 )
 
 func main() {
-	src, err := sql.Open("sqlite3", "file:/Users/crispychris/Desktop/repos/researchiq-gotha/data/app.db?mode=ro")
+	srcPath := flag.String("src", "/Users/crispychris/Desktop/repos/researchiq-gotha/data/app.db", "path to source (gotha-schema) sqlite db")
+	dstPath := flag.String("dst", "./data/app.db", "path to destination (gova-schema) sqlite db, tables must already exist")
+	flag.Parse()
+
+	src, err := sql.Open("sqlite3", "file:"+*srcPath+"?mode=ro")
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer src.Close()
 
-	dst, err := sql.Open("sqlite3", "./data/app.db")
+	dst, err := sql.Open("sqlite3", *dstPath)
 	if err != nil {
 		log.Fatal(err)
 	}
