@@ -1,0 +1,10 @@
+<section class="section">
+  <h2 class="section-heading">{{.Heading}}</h2>
+  <div class="cards-grid">
+    {{range .Cards}}<div class="card">
+      {{if .Badge}}<span class="badge">{{.Badge}}</span>{{end}}
+      <strong class="card-title">{{.Title}}</strong>
+      <p class="card-body">{{.Body}}</p>
+    </div>{{end}}
+  </div>
+</section>

@@ -1,0 +1,11 @@
+<section class="section">
+  <h2 class="section-heading">{{.Heading}}</h2>
+  <div class="bar-chart">
+    {{range .Bars}}<div class="bar-row">
+      <span class="bar-label">{{.Label}}</span>
+      <div class="bar-track"><div class="bar-fill" style="width:{{printf "%.0f" .Value}}%"></div></div>
+      <span class="bar-value">{{printf "%.0f" .Value}}{{.Suffix}}</span>
+    </div>{{end}}
+  </div>
+  {{if .Annotation}}<p class="annotation">{{.Annotation}}</p>{{end}}
+</section>

@@ -1,0 +1,12 @@
+<section class="section">
+  <h2 class="section-heading">{{.Heading}}</h2>
+  <div class="timeline">
+    {{range .Events}}<div class="timeline-event">
+      <span class="timeline-year">{{.Year}}</span>
+      <div>
+        <strong class="timeline-title">{{.Title}}</strong>
+        <p class="timeline-body">{{.Body}}</p>
+      </div>
+    </div>{{end}}
+  </div>
+</section>

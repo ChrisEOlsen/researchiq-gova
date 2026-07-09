@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/go-chi/chi/v5"
 	chiMiddleware "github.com/go-chi/chi/v5/middleware"
@@ -12,6 +13,7 @@ import (
 	"gova/app/db"
 	"gova/app/handlers"
 	"gova/app/middleware"
+	"gova/app/models"
 )
 
 func main() {
@@ -33,6 +35,23 @@ func main() {
 
 	appCache := cache.New()
 	_ = appCache
+
+	// PubMed abstract cache: prune entries older than 30 days at startup,
+	// then keep pruning on a 24h ticker for the life of the process.
+	// GOTHA only pruned once at startup (Known Bug #5) — this fixes that.
+	pubmedCacheModel := models.NewPubmedCacheModel(database.Read, database.Write)
+	if err := pubmedCacheModel.PruneOlderThan30Days(); err != nil {
+		log.Printf("pubmed cache prune (startup): %v", err)
+	}
+	go func() {
+		ticker := time.NewTicker(24 * time.Hour)
+		defer ticker.Stop()
+		for range ticker.C {
+			if err := pubmedCacheModel.PruneOlderThan30Days(); err != nil {
+				log.Printf("pubmed cache prune (ticker): %v", err)
+			}
+		}
+	}()
 
 	r := chi.NewRouter()
 	r.Use(chiMiddleware.Logger)

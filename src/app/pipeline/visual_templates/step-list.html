@@ -1,0 +1,12 @@
+<section class="section">
+  <h2 class="section-heading">{{.Heading}}</h2>
+  <ol class="step-list">
+    {{range $i, $s := .Steps}}<li class="step-item">
+      <span class="step-num">{{add $i 1}}</span>
+      <div>
+        <strong class="step-title">{{$s.Title}}</strong>
+        <span class="step-body">{{$s.Body}}</span>
+      </div>
+    </li>{{end}}
+  </ol>
+</section>
