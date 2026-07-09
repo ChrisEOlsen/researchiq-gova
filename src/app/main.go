@@ -46,13 +46,15 @@ func main() {
 
 	// Pages
 	r.Get("/", handlers.HomeGET())
+	r.Get("/login", func(w http.ResponseWriter, r *http.Request) { http.ServeFile(w, r, "./static/pages/login.html") })
+	r.Get("/register", func(w http.ResponseWriter, r *http.Request) { http.ServeFile(w, r, "./static/pages/register.html") })
 
 	// Generated API routes registered here by MCP tools
 	// Use database.Read for GET handlers, database.Write for POST handlers
-	// Example:
-	//   r.Post("/api/auth/login",  handlers.LoginPOST(database.Read, database.Write, appCache))
-	//   r.Post("/api/auth/logout", handlers.LogoutPOST())
-	//   r.Get("/api/auth/me",      handlers.MeGET(database.Read, database.Write, appCache))
+	r.Post("/api/auth/login", handlers.LoginPOST(database.Read, database.Write, appCache))
+	r.Post("/api/auth/logout", handlers.LogoutPOST())
+	r.Get("/api/auth/me", handlers.MeGET(database.Read, database.Write, appCache))
+	r.Post("/api/auth/register", handlers.RegisterPOST(database.Read, database.Write, appCache))
 
 	port := os.Getenv("APP_PORT")
 	if port == "" {
