@@ -13,11 +13,17 @@ type envelope struct {
 
 func jsonOK(w http.ResponseWriter, data any) {
 	w.Header().Set("Content-Type", "application/json")
+	// Every JSON response here is session/privilege-dependent (credits,
+	// lifetime_access, ownership-gated data) -- letting the browser cache
+	// it means a stale privilege state can keep rendering after the
+	// underlying data changes, with no explicit reload to fix it.
+	w.Header().Set("Cache-Control", "no-store")
 	json.NewEncoder(w).Encode(envelope{OK: true, Data: data})
 }
 
 func jsonError(w http.ResponseWriter, msg string, status int) {
 	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Cache-Control", "no-store")
 	w.WriteHeader(status)
 	json.NewEncoder(w).Encode(envelope{OK: false, Error: msg})
 }
