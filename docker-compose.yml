@@ -10,6 +10,13 @@ services:
       - ./data:/data
       - ./logs:/logs
     env_file: .env
+    environment:
+      # The container's internal port always stays 8080 regardless of
+      # .env's APP_PORT -- that variable only controls the host-side
+      # port mapping above. Without this override, the app listens on
+      # whatever APP_PORT says internally too, which stops matching the
+      # fixed :8080 half of the port mapping the instant APP_PORT != 8080.
+      - APP_PORT=8080
 
   # Dedicated container for the gova-builder MCP server, decoupled from the
   # app container's lifecycle. `docker compose restart app` (needed after
