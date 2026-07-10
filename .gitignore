@@ -1,4 +1,5 @@
 .env
+.env.production
 .mcp.json
 .claude/settings.local.json
 .security/
