@@ -3,13 +3,14 @@ import { initNav } from '/static/js/lib/nav.js';
 
 const app = document.getElementById('app');
 
-// Same 5 example questions as the production app.
+// Same 5 example questions as the production app, tagged with the
+// research field each one falls under (shown in the index list).
 const EXAMPLE_QUESTIONS = [
-  'Are bluetooth headphones really bad for your brain?',
-  'Is fluoride in drinking water bad for your health?',
-  'Do egg yolks increase LDL cholesterol?',
-  'Does sauna improve heart health?',
-  'Is chiropractic care a pseudo science?',
+  ['Neurology', 'Are bluetooth headphones really bad for your brain?'],
+  ['Public health', 'Is fluoride in drinking water bad for your health?'],
+  ['Nutrition', 'Do egg yolks increase LDL cholesterol?'],
+  ['Cardiology', 'Does sauna improve heart health?'],
+  ['Musculoskeletal', 'Is chiropractic care a pseudo science?'],
 ];
 
 const HOW_IT_WORKS_STEPS = [
@@ -25,43 +26,54 @@ let errorMsg;
 
 function renderHero(wrapper) {
   const hero = document.createElement('div');
-  hero.className = 'text-center space-y-3 mb-10';
+  hero.className = 'mb-10';
+
+  const eyebrow = document.createElement('p');
+  eyebrow.className = 'font-metric text-[0.6875rem] tracking-[0.18em] uppercase text-ink-soft mb-5';
+  eyebrow.textContent = 'Evidence engine · 36M peer-reviewed studies';
+
   const h1 = document.createElement('h1');
-  h1.className = 'font-display text-[2.25rem] font-semibold text-text leading-tight';
-  h1.textContent = 'What does the science say?';
+  h1.className = 'font-journal font-light text-[2.25rem] sm:text-[2.75rem] leading-[1.12] text-ink';
+  h1.append('What does ');
+  const marked = document.createElement('span');
+  marked.className = 'hl-mark font-medium';
+  marked.textContent = 'the science';
+  h1.append(marked, ' say?');
+
   const tagline = document.createElement('p');
-  tagline.className = 'text-text-muted text-[0.9375rem] leading-relaxed max-w-[480px] mx-auto';
-  tagline.append('Ask any health question — ResearchIQ searches ');
+  tagline.className = 'text-ink-soft text-[0.9375rem] leading-relaxed max-w-[520px] mt-4';
+  tagline.append('Ask any health question. ResearchIQ reads the peer-reviewed literature on ');
   const strong = document.createElement('strong');
-  strong.className = 'text-text font-medium';
+  strong.className = 'text-ink font-medium';
   strong.textContent = 'PubMed';
-  tagline.append(strong, ", the world's largest database of peer-reviewed studies, and uses AI to summarize what the research actually says, with cited sources.");
-  hero.append(h1, tagline);
+  tagline.append(strong, ' and returns a plain-language summary — every claim cited back to the original paper.');
+
+  hero.append(eyebrow, h1, tagline);
   wrapper.appendChild(hero);
 }
 
 function renderGuestExhaustedGate(wrapper) {
   const card = document.createElement('div');
-  card.className = 'bg-surface border border-border rounded-lg px-6 py-8 text-center';
+  card.className = 'bg-white border border-rule rounded-xl px-6 py-8 text-center';
 
   const title = document.createElement('p');
-  title.className = 'text-base font-medium text-text mb-2';
+  title.className = 'font-journal text-lg font-medium text-ink mb-2';
   title.textContent = "You've used all 5 free credits";
   const body = document.createElement('p');
-  body.className = 'text-sm text-text-muted mb-6 leading-relaxed';
+  body.className = 'text-sm text-ink-soft mb-6 leading-relaxed';
   body.textContent = 'Create a free account to purchase more research credits.';
 
   const createBtn = document.createElement('a');
   createBtn.href = '/register';
-  createBtn.className = 'inline-block bg-primary hover:bg-primary-hover text-white rounded-lg px-8 py-3 text-[0.9375rem] font-semibold no-underline transition-colors';
+  createBtn.className = 'inline-block bg-ink hover:bg-[#1d4750] text-paper rounded-lg px-8 py-3 text-[0.9375rem] font-medium no-underline transition-colors';
   createBtn.textContent = 'Create Account';
 
   const signInRow = document.createElement('p');
-  signInRow.className = 'text-[0.8125rem] text-text-muted mt-4';
+  signInRow.className = 'text-[0.8125rem] text-ink-soft mt-4';
   signInRow.append('Already have an account? ');
   const signInLink = document.createElement('a');
   signInLink.href = '/login';
-  signInLink.className = 'text-primary no-underline';
+  signInLink.className = 'text-accent no-underline';
   signInLink.textContent = 'Sign in';
   signInRow.appendChild(signInLink);
 
@@ -71,13 +83,13 @@ function renderGuestExhaustedGate(wrapper) {
 
 function renderLowCreditBanner(wrapper) {
   const banner = document.createElement('div');
-  banner.className = 'bg-surface border border-border rounded-lg px-4 py-3.5 mb-5 flex items-center justify-between gap-4';
+  banner.className = 'bg-white border border-rule rounded-xl px-4 py-3.5 mb-5 flex items-center justify-between gap-4';
   const text = document.createElement('p');
-  text.className = 'text-sm text-text-muted m-0';
+  text.className = 'text-sm text-ink-soft m-0';
   text.textContent = 'You have no credits remaining.';
   const buyBtn = document.createElement('a');
   buyBtn.href = '/settings';
-  buyBtn.className = 'shrink-0 bg-primary hover:bg-primary-hover text-white rounded-md px-4 py-2 text-sm font-medium no-underline transition-colors';
+  buyBtn.className = 'shrink-0 bg-ink hover:bg-[#1d4750] text-paper rounded-md px-4 py-2 text-sm font-medium no-underline transition-colors';
   buyBtn.textContent = 'Buy more credits';
   banner.append(text, buyBtn);
   wrapper.appendChild(banner);
@@ -85,34 +97,48 @@ function renderLowCreditBanner(wrapper) {
 
 function renderForm(wrapper, isAuthed) {
   errorMsg = document.createElement('div');
-  errorMsg.className = 'hidden border border-red-200 bg-red-50 text-red-700 text-sm px-4 py-3 rounded mb-3';
+  errorMsg.className = 'hidden border border-red-200 bg-red-50 text-red-700 text-sm px-4 py-3 rounded-lg mb-3';
   wrapper.appendChild(errorMsg);
 
   const form = document.createElement('form');
+
+  // Query card: borderless textarea + a metadata footer row, framed as
+  // one white "record" on the paper background.
+  const card = document.createElement('div');
+  card.className = 'bg-white border border-rule rounded-xl shadow-[0_1px_2px_rgba(20,51,60,0.05)] transition-colors focus-within:border-ink/50';
 
   textarea = document.createElement('textarea');
   textarea.name = 'question';
   textarea.rows = 4;
   textarea.required = true;
   textarea.minLength = 10;
-  textarea.placeholder = 'Write your question to trigger research...';
-  textarea.className = 'block w-full bg-surface border border-border rounded-lg px-4 py-3.5 text-[0.9375rem] text-text resize-none mb-3 transition-colors focus:outline-none focus:border-primary';
+  textarea.placeholder = 'Ask a health question…';
+  textarea.className = 'block w-full bg-transparent px-4 pt-4 pb-2 text-[0.9375rem] text-ink placeholder:text-ink-soft/70 resize-none focus:outline-none';
+
+  const footerRow = document.createElement('div');
+  footerRow.className = 'flex items-center justify-between gap-4 border-t border-rule px-4 py-3';
+
+  const meta = document.createElement('span');
+  meta.className = 'font-metric text-[0.625rem] tracking-[0.16em] uppercase text-ink-soft';
+  meta.textContent = 'PubMed · cited sources';
 
   submitBtn = document.createElement('button');
   submitBtn.type = 'submit';
-  submitBtn.className = 'w-full bg-primary hover:bg-primary-hover text-white rounded-lg px-6 py-3 text-[0.9375rem] font-semibold transition-colors';
+  submitBtn.className = 'shrink-0 bg-ink hover:bg-[#1d4750] text-paper rounded-lg px-6 py-2.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-mark';
   submitBtn.textContent = 'Research';
 
-  form.append(textarea, submitBtn);
+  footerRow.append(meta, submitBtn);
+  card.append(textarea, footerRow);
+  form.appendChild(card);
   form.addEventListener('submit', onSubmit);
 
   if (!isAuthed) {
     const loginHint = document.createElement('p');
-    loginHint.className = 'text-center text-[0.8125rem] text-text-muted mt-2.5';
+    loginHint.className = 'text-[0.8125rem] text-ink-soft mt-3';
     loginHint.append('Log in to save your results to your account. ');
     const loginLink = document.createElement('a');
     loginLink.href = '/login';
-    loginLink.className = 'text-primary font-medium no-underline';
+    loginLink.className = 'text-accent font-medium no-underline';
     loginLink.textContent = 'Sign In';
     loginHint.appendChild(loginLink);
     form.appendChild(loginHint);
@@ -120,20 +146,42 @@ function renderForm(wrapper, isAuthed) {
 
   wrapper.appendChild(form);
 
-  const chips = document.createElement('div');
-  chips.className = 'mt-4 flex flex-col gap-2 items-start';
-  EXAMPLE_QUESTIONS.forEach((q) => {
-    const chip = document.createElement('button');
-    chip.type = 'button';
-    chip.className = 'inline-block w-fit bg-surface border border-border rounded-full px-3.5 py-1.5 text-[0.8125rem] text-text-muted hover:border-primary hover:text-primary transition-colors text-left';
-    chip.textContent = q;
-    chip.addEventListener('click', () => {
+  // Example questions as an evidence index: ruled rows with a mono
+  // field tag, rather than pill chips.
+  const index = document.createElement('div');
+  index.className = 'mt-12';
+
+  const indexLabel = document.createElement('p');
+  indexLabel.className = 'font-metric text-[0.625rem] tracking-[0.18em] uppercase text-ink-soft mb-1';
+  indexLabel.textContent = 'Or start from the index';
+  index.appendChild(indexLabel);
+
+  EXAMPLE_QUESTIONS.forEach(([field, q]) => {
+    const row = document.createElement('button');
+    row.type = 'button';
+    row.className = 'group w-full flex flex-col gap-0.5 sm:flex-row sm:items-baseline sm:gap-4 border-t border-rule py-3 text-left last:border-b';
+
+    const tag = document.createElement('span');
+    tag.className = 'font-metric text-[0.625rem] tracking-[0.12em] uppercase text-ink-soft sm:w-[118px] shrink-0';
+    tag.textContent = field;
+
+    const question = document.createElement('span');
+    question.className = 'text-[0.9375rem] text-ink group-hover:text-accent transition-colors';
+    question.textContent = q;
+
+    const arrow = document.createElement('span');
+    arrow.className = 'hidden sm:inline ml-auto shrink-0 self-center text-accent opacity-0 group-hover:opacity-100 transition-opacity';
+    arrow.textContent = '→';
+    arrow.setAttribute('aria-hidden', 'true');
+
+    row.append(tag, question, arrow);
+    row.addEventListener('click', () => {
       textarea.value = q;
       textarea.focus();
     });
-    chips.appendChild(chip);
+    index.appendChild(row);
   });
-  wrapper.appendChild(chips);
+  wrapper.appendChild(index);
 }
 
 function renderHowItWorks() {
@@ -143,7 +191,7 @@ function renderHowItWorks() {
   const trigger = document.createElement('button');
   trigger.type = 'button';
   trigger.title = 'What does ResearchIQ do?';
-  trigger.className = 'flex items-center gap-1.5 bg-surface border border-border rounded-full px-3 py-1.5 text-[0.8125rem] text-text-muted shadow-sm hover:border-primary hover:text-primary transition-colors';
+  trigger.className = 'flex items-center gap-1.5 bg-white border border-rule rounded-full px-3 py-1.5 text-[0.8125rem] text-ink-soft shadow-sm hover:border-ink hover:text-ink transition-colors';
 
   const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   icon.setAttribute('width', '13');
@@ -166,19 +214,19 @@ function renderHowItWorks() {
   trigger.append(icon, document.createTextNode(' How it works'));
 
   const backdrop = document.createElement('div');
-  backdrop.className = 'hidden fixed inset-0 bg-black/35 flex items-center justify-center p-4 z-[200]';
+  backdrop.className = 'hidden fixed inset-0 bg-ink/30 flex items-center justify-center p-4 z-[200]';
 
   const modal = document.createElement('div');
-  modal.className = 'bg-surface border border-border rounded-xl px-7 py-8 max-w-[440px] w-full shadow-xl';
+  modal.className = 'bg-white border border-rule rounded-xl px-7 py-8 max-w-[440px] w-full shadow-xl';
 
   const modalHead = document.createElement('div');
   modalHead.className = 'flex items-start justify-between mb-5';
   const modalTitle = document.createElement('h2');
-  modalTitle.className = 'font-display text-xl font-semibold text-text m-0';
+  modalTitle.className = 'font-journal text-xl font-medium text-ink m-0';
   modalTitle.textContent = 'What does ResearchIQ do?';
   const closeBtn = document.createElement('button');
   closeBtn.type = 'button';
-  closeBtn.className = 'bg-transparent border-0 cursor-pointer text-text-muted p-0 ml-4 shrink-0';
+  closeBtn.className = 'bg-transparent border-0 cursor-pointer text-ink-soft p-0 ml-4 shrink-0';
   closeBtn.setAttribute('aria-label', 'Close');
   const closeIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   closeIcon.setAttribute('width', '18');
@@ -197,18 +245,18 @@ function renderHowItWorks() {
   modalHead.append(modalTitle, closeBtn);
 
   const ol = document.createElement('ol');
-  ol.className = 'm-0 pl-5 flex flex-col gap-3.5 text-text-muted text-[0.9rem] leading-relaxed';
+  ol.className = 'm-0 pl-5 flex flex-col gap-3.5 text-ink-soft text-[0.9rem] leading-relaxed marker:font-metric marker:text-[0.75rem] marker:text-ink-soft';
   HOW_IT_WORKS_STEPS.forEach(([lead, rest]) => {
     const li = document.createElement('li');
     const strong = document.createElement('strong');
-    strong.className = 'text-text font-medium';
+    strong.className = 'text-ink font-medium';
     strong.textContent = lead;
     li.append(strong, ` ${rest}`);
     ol.appendChild(li);
   });
 
   const footer = document.createElement('p');
-  footer.className = 'mt-5 text-[0.8125rem] text-text-muted leading-snug';
+  footer.className = 'mt-5 font-journal italic text-[0.9375rem] text-ink-soft leading-snug';
   footer.textContent = 'No opinions. No anecdotes. Just what peer-reviewed science actually says.';
 
   modal.append(modalHead, ol, footer);
@@ -242,7 +290,7 @@ async function loadState() {
 
 async function render() {
   const wrapper = document.createElement('div');
-  wrapper.className = 'max-w-[640px] mx-auto w-full px-4 py-12 animate-fade-in';
+  wrapper.className = 'max-w-[660px] mx-auto w-full px-4 py-14 animate-fade-in';
 
   const state = await loadState();
   renderHero(wrapper);
