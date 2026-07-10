@@ -9,6 +9,14 @@ services:
       - ./src:/src
       - ./data:/data
       - ./logs:/logs
+      # entrypoint.sh runs `go build` on every container start (so bind-
+      # mounted source changes take effect without a full image rebuild).
+      # Without a persistent GOCACHE, that's a full CGO recompile from
+      # scratch every time -- the go-sqlite3 C bindings alone take real
+      # wall-clock time. A named volume survives container recreation
+      # (unlike the container's own writable layer, which `--build`
+      # always discards), so unchanged code gets an incremental build.
+      - go-build-cache:/root/.cache/go-build
     env_file: .env
     environment:
       # The container's internal port always stays 8080 regardless of
@@ -52,3 +60,6 @@ services:
       - TUNNEL_TOKEN=${TUNNEL_TOKEN}
     networks:
       - default
+
+volumes:
+  go-build-cache:

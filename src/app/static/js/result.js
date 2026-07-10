@@ -163,6 +163,7 @@ function render(data) {
   setOgMeta(title, summary.slice(0, 200));
 
   const wrapper = document.createElement('div');
+  wrapper.className = 'animate-fade-in';
 
   const h1 = document.createElement('h1');
   h1.className = 'font-display text-[1.875rem] font-bold text-text leading-tight mb-1.5';

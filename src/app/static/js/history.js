@@ -42,7 +42,7 @@ function renderJobs(jobs, isAuthed) {
   app.replaceChildren();
   if (jobs.length === 0) {
     const empty = document.createElement('div');
-    empty.className = 'text-center py-16 text-text-muted';
+    empty.className = 'text-center py-16 text-text-muted animate-fade-in';
     const p = document.createElement('p');
     p.className = 'text-[1.0625rem] mb-4';
     p.textContent = 'No research yet.';
@@ -55,7 +55,7 @@ function renderJobs(jobs, isAuthed) {
     return;
   }
   const list = document.createElement('div');
-  list.className = 'flex flex-col gap-2.5';
+  list.className = 'flex flex-col gap-2.5 animate-fade-in';
   jobs.forEach((job) => list.appendChild(renderJobRow(job, isAuthed)));
   app.appendChild(list);
 }

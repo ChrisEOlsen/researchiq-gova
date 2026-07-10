@@ -58,6 +58,7 @@ function render(data, paymentSuccess) {
   const transactions = Array.isArray(data.transactions) ? data.transactions : [];
 
   const wrapper = document.createElement('div');
+  wrapper.className = 'animate-fade-in';
 
   if (paymentSuccess) {
     const banner = document.createElement('div');
