@@ -256,6 +256,7 @@ async function render() {
     renderForm(wrapper, state.isAuthed);
   }
 
+  app.className = '';
   app.replaceChildren(wrapper);
 }
 

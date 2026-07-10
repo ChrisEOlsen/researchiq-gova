@@ -33,6 +33,7 @@ async function init() {
 }
 
 function renderError(msg) {
+  app.className = '';
   const p = document.createElement('p');
   p.className = 'text-sm text-red-600';
   p.textContent = msg;
@@ -74,6 +75,7 @@ function render(data, paymentSuccess) {
   wrapper.appendChild(renderCreditsSection(user, packs));
   if (transactions.length > 0) wrapper.appendChild(renderHistorySection(transactions));
 
+  app.className = '';
   app.replaceChildren(wrapper);
 }
 

@@ -32,6 +32,7 @@ async function init() {
 }
 
 function renderError(msg) {
+  app.className = '';
   const p = document.createElement('p');
   p.className = 'text-sm text-red-600';
   p.textContent = msg;
@@ -39,6 +40,7 @@ function renderError(msg) {
 }
 
 function renderJobs(jobs, isAuthed) {
+  app.className = '';
   app.replaceChildren();
   if (jobs.length === 0) {
     const empty = document.createElement('div');

@@ -21,6 +21,7 @@ async function init() {
 }
 
 function renderError(msg) {
+  app.className = '';
   const p = document.createElement('p');
   p.className = 'text-sm text-red-600';
   p.textContent = msg;
@@ -209,6 +210,7 @@ function render(data) {
   cta.append(ctaText, ctaLink);
   wrapper.appendChild(cta);
 
+  app.className = '';
   app.replaceChildren(wrapper);
 }
 

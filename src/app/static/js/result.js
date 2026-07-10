@@ -21,6 +21,7 @@ async function init() {
 }
 
 function renderError(msg) {
+  app.className = '';
   const p = document.createElement('p');
   p.className = 'text-sm text-red-600';
   p.textContent = msg;
@@ -266,6 +267,7 @@ function render(data) {
   studiesSection.appendChild(studiesList);
   wrapper.appendChild(studiesSection);
 
+  app.className = '';
   app.replaceChildren(wrapper);
 }
 
