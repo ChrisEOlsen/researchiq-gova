@@ -3,25 +3,58 @@
 @source "../pages/**/*.html";
 
 @theme {
-  /* ResearchIQ warm palette */
-  --color-bg:            #faf8f5;
+  /* ResearchIQ "annotated literature" palette — cool lab paper, deep
+     petrol ink, highlighter-yellow mark, teal accent. The legacy token
+     names (bg/surface/text/border/primary) alias the same values so
+     every page inherits the design without markup churn. */
+  --color-paper:    #f6f8f7;
+  --color-ink:      #14333c;
+  --color-ink-soft: #5a7178;
+  --color-rule:     #dce3e1;
+  --color-mark:     #fde85c;
+  --color-accent:   #0e7a63;
+
+  --color-bg:            #f6f8f7;
   --color-surface:       #ffffff;
-  --color-surface-2:     #f3ede6;
-  --color-text:          #292524;
-  --color-text-muted:    #78716c;
-  --color-border:        #e8e0d8;
-  --color-hover:         #f5f0ea;
-  --color-primary:       #c0392b;
-  --color-primary-hover: #a93226;
+  --color-surface-2:     #eef2f1;
+  --color-text:          #14333c;
+  --color-text-muted:    #5a7178;
+  --color-border:        #dce3e1;
+  --color-hover:         #eef2f1;
+  --color-primary:       #14333c;
+  --color-primary-hover: #1d4750;
 
   /* Typography */
-  --font-display: "Playfair Display", Georgia, serif;
-  --font-sans:    "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: "Spectral", Georgia, serif;
+  --font-sans:    "IBM Plex Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-journal: "Spectral", Georgia, serif;
+  --font-plex:    "IBM Plex Sans", -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-metric:  "Spectral", Georgia, serif;
 
   /* Animations */
   --animate-pulse-dot: pulse-dot 1.4s ease-in-out infinite;
   --animate-spin:      spin 0.7s linear infinite;
   --animate-fade-in:   fade-in 0.25s ease-out;
+}
+
+/* Highlighter swipe over headline words. Background-image (not a
+   pseudo-element) so the mark follows line wraps, with
+   box-decoration-break: clone giving each wrapped fragment its own
+   rounded mark. */
+.hl-mark {
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  border-radius: 0.25em;
+  padding: 0.06em 0.14em;
+  margin: -0.06em -0.14em;
+  background-image: linear-gradient(0deg, var(--color-mark), var(--color-mark));
+  background-repeat: no-repeat;
+  background-size: 0% 100%;
+  animation: hl-sweep 0.5s cubic-bezier(0.25, 0.6, 0.3, 1) 0.35s forwards;
+}
+
+@keyframes hl-sweep {
+  to { background-size: 100% 100%; }
 }
 
 @keyframes pulse-dot {
@@ -47,7 +80,7 @@
 
 body {
   font-family: var(--font-sans);
-  font-weight: 300;
+  font-weight: 400;
   background-color: var(--color-bg);
   color: var(--color-text);
 }

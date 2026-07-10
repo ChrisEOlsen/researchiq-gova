@@ -56,7 +56,7 @@ function studyCard(s) {
     a.href = url;
     a.target = '_blank';
     a.rel = 'noopener noreferrer';
-    a.className = 'text-sm font-medium text-primary no-underline hover:underline block leading-snug';
+    a.className = 'text-sm font-medium text-accent no-underline hover:underline block leading-snug';
     a.textContent = s.title || 'Untitled study';
     card.appendChild(a);
   } else {
@@ -210,7 +210,7 @@ function render(data) {
       const li = document.createElement('li');
       li.className = 'flex gap-3 text-[0.9375rem] text-text leading-relaxed';
       const arrow = document.createElement('span');
-      arrow.className = 'text-primary shrink-0 mt-0.5';
+      arrow.className = 'text-accent shrink-0 mt-0.5';
       arrow.textContent = '→';
       const text = document.createElement('span');
       text.textContent = t;
