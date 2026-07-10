@@ -290,7 +290,7 @@ async function loadState() {
 
 async function render() {
   const wrapper = document.createElement('div');
-  wrapper.className = 'max-w-[660px] mx-auto w-full px-4 py-14 animate-fade-in';
+  wrapper.className = 'max-w-[660px] mx-auto w-full px-4 pt-6 pb-14 animate-fade-in';
 
   const state = await loadState();
   renderHero(wrapper);
