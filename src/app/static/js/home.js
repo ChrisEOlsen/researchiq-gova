@@ -6,7 +6,7 @@ const app = document.getElementById('app');
 // Same 5 example questions as the production app.
 const EXAMPLE_QUESTIONS = [
   'Are bluetooth headphones really bad for your brain?',
-  'Is flouride in drinking water bad for your health?',
+  'Is fluoride in drinking water bad for your health?',
   'Do egg yolks increase LDL cholesterol?',
   'Does sauna improve heart health?',
   'Is chiropractic care a pseudo science?',
