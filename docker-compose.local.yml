@@ -1,3 +1,11 @@
+# Local dev only. Run with:
+#   docker compose --env-file .env.local -f docker-compose.local.yml up -d --build
+# The --env-file flag matters: Compose separately auto-loads a literal
+# ".env" (now the *production* file) to resolve ${VAR} placeholders in
+# this YAML itself (port mapping, project name below) -- that's a
+# different mechanism than the env_file: lines, which do control what
+# the containers actually see. Passing --env-file makes both layers use
+# .env.local, so nothing here ever reads production values.
 name: ${APP_NAME:-my-gova-app}
 
 services:
@@ -9,10 +17,10 @@ services:
       - ./src:/src
       - ./data:/data
       - ./logs:/logs
-    env_file: .env
+    env_file: .env.local
     environment:
       # The container's internal port always stays 8080 regardless of
-      # .env's APP_PORT -- that variable only controls the host-side
+      # .env.local's APP_PORT -- that variable only controls the host-side
       # port mapping above. Without this override, the app listens on
       # whatever APP_PORT says internally too, which stops matching the
       # fixed :8080 half of the port mapping the instant APP_PORT != 8080.
@@ -33,4 +41,4 @@ services:
     volumes:
       - ./src:/src
       - ./data:/data
-    env_file: .env
+    env_file: .env.local
