@@ -29,7 +29,7 @@ function renderHero(wrapper) {
   hero.className = 'mb-10';
 
   const eyebrow = document.createElement('p');
-  eyebrow.className = 'font-metric text-[0.6875rem] tracking-[0.18em] uppercase text-ink-soft mb-5';
+  eyebrow.className = 'font-metric font-medium text-[0.75rem] tracking-[0.18em] uppercase text-ink-soft mb-5';
   eyebrow.textContent = 'Evidence engine · 36M peer-reviewed studies';
 
   const h1 = document.createElement('h1');
@@ -119,7 +119,7 @@ function renderForm(wrapper, isAuthed) {
   footerRow.className = 'flex items-center justify-between gap-4 border-t border-rule px-4 py-3';
 
   const meta = document.createElement('span');
-  meta.className = 'font-metric text-[0.625rem] tracking-[0.16em] uppercase text-ink-soft';
+  meta.className = 'font-metric font-medium text-[0.6875rem] tracking-[0.16em] uppercase text-ink-soft';
   meta.textContent = 'PubMed · cited sources';
 
   submitBtn = document.createElement('button');
@@ -152,7 +152,7 @@ function renderForm(wrapper, isAuthed) {
   index.className = 'mt-12';
 
   const indexLabel = document.createElement('p');
-  indexLabel.className = 'font-metric text-[0.625rem] tracking-[0.18em] uppercase text-ink-soft mb-1';
+  indexLabel.className = 'font-metric font-medium text-[0.6875rem] tracking-[0.18em] uppercase text-ink-soft mb-1';
   indexLabel.textContent = 'Or start from the index';
   index.appendChild(indexLabel);
 
@@ -162,7 +162,7 @@ function renderForm(wrapper, isAuthed) {
     row.className = 'group w-full flex flex-col gap-0.5 sm:flex-row sm:items-baseline sm:gap-4 border-t border-rule py-3 text-left last:border-b';
 
     const tag = document.createElement('span');
-    tag.className = 'font-metric text-[0.625rem] tracking-[0.12em] uppercase text-ink-soft sm:w-[118px] shrink-0';
+    tag.className = 'font-metric font-medium text-[0.6875rem] tracking-[0.12em] uppercase text-ink-soft sm:w-[140px] shrink-0';
     tag.textContent = field;
 
     const question = document.createElement('span');
@@ -245,7 +245,7 @@ function renderHowItWorks() {
   modalHead.append(modalTitle, closeBtn);
 
   const ol = document.createElement('ol');
-  ol.className = 'm-0 pl-5 flex flex-col gap-3.5 text-ink-soft text-[0.9rem] leading-relaxed marker:font-metric marker:text-[0.75rem] marker:text-ink-soft';
+  ol.className = 'm-0 pl-5 flex flex-col gap-3.5 text-ink-soft text-[0.9rem] leading-relaxed marker:font-metric marker:text-[0.8125rem] marker:text-ink-soft';
   HOW_IT_WORKS_STEPS.forEach(([lead, rest]) => {
     const li = document.createElement('li');
     const strong = document.createElement('strong');

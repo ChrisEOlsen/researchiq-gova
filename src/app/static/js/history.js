@@ -50,7 +50,7 @@ function renderJobs(jobs, isAuthed) {
     p.textContent = 'No research yet.';
     const link = document.createElement('a');
     link.href = '/';
-    link.className = 'text-primary text-sm no-underline';
+    link.className = 'text-accent text-sm no-underline';
     link.textContent = 'Ask your first question →';
     empty.append(p, link);
     app.appendChild(empty);
@@ -191,7 +191,7 @@ function setStatusBadge(el, job) {
 
   el.classList.add('bg-yellow-100', 'text-yellow-800');
   const dot = document.createElement('span');
-  dot.className = 'inline-block w-2 h-2 rounded-full bg-primary animate-pulse-dot';
+  dot.className = 'inline-block w-2 h-2 rounded-full bg-accent animate-pulse-dot';
   el.appendChild(dot);
 
   let text = STAGE_LABELS[job.pipeline_stage] || 'Processing…';
