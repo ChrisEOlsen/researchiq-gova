@@ -5,6 +5,7 @@
 # database) or .env (real secrets, managed on the server directly).
 rsync -avz \
   --exclude='.git' \
+  --exclude='docker-compose.local*.yml' \
   --exclude='data' \
   --exclude='logs' \
   --exclude='.env' \
