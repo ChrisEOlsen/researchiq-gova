@@ -62,7 +62,7 @@ func main() {
 	r.Use(middleware.Auth)
 
 	// Static files
-	r.Handle("/static/*", http.StripPrefix("/static/", http.FileServer(http.Dir("./static"))))
+	r.Handle("/static/*", middleware.StaticCache(http.StripPrefix("/static/", http.FileServer(http.Dir("./static")))))
 
 	// Stripe calls this server-to-server with an HMAC-signed payload instead
 	// of a browser session — it must stay outside the CSRF group below.
