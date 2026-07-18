@@ -77,7 +77,7 @@ func main() {
 		r.Get("/register", func(w http.ResponseWriter, r *http.Request) { http.ServeFile(w, r, "./static/pages/register.html") })
 		r.Get("/history", handlers.HistoryGET())
 		r.Get("/result", handlers.ResultGET())
-		r.Get("/share", handlers.ShareGET())
+		r.Get("/share", handlers.ShareGET(database.Read, database.Write, appCache))
 		r.Get("/settings", handlers.SettingsGET())
 		r.Get("/inbody570-guide.html", func(w http.ResponseWriter, r *http.Request) { http.ServeFile(w, r, "./static/inbody570-guide.html") })
 
